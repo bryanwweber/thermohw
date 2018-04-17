@@ -13,6 +13,17 @@ c.ExtractOutputPreprocessor.output_filename_template = "{unique_key}_{cell_index
 
 
 class HomeworkPreprocessor(Preprocessor):
+    def preprocess(self, nb, resources):
+        keep_cells = []
+        for cell in nb.cells:
+            if cell.cell_type != 'raw':
+                keep_cells.append(cell)
+
+        nb.cells = keep_cells
+        for index, cell in enumerate(nb.cells):
+            nb.cells[index], resources = self.preprocess_cell(cell, resources, index)
+        return nb, resources
+
     def preprocess_cell(self, cell, resources, index):
         if cell.cell_type != 'code':
             return cell, resources
