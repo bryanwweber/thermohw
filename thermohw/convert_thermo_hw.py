@@ -1,12 +1,15 @@
-from nbconvert import MarkdownExporter, NotebookExporter
-from nbconvert.preprocessors import Preprocessor, ExtractOutputPreprocessor
-from traitlets.config import Config
-from nbconvert.writers import FilesWriter
+# Standard library
 import os
-import pypandoc
 import copy
 from pathlib import Path
 from argparse import ArgumentParser
+
+# Third Party
+from nbconvert import MarkdownExporter, NotebookExporter  # type: ignore
+from nbconvert.preprocessors import Preprocessor, ExtractOutputPreprocessor  # type: ignore
+from traitlets.config import Config  # type: ignore
+from nbconvert.writers import FilesWriter  # type: ignore
+import pypandoc  # type: ignore
 
 c = Config()
 c.ExtractOutputPreprocessor.output_filename_template = "{unique_key}_{cell_index}_{index}.jpeg"
