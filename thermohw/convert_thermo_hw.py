@@ -1,3 +1,41 @@
+"""
+This module converts a Jupyter Notebook-format homework problem.
+
+The single input Jupyter Notebook is converted into four files:
+
+- A Notebook without the solution for students to fill in
+- A PDF without the solution for students to fill in
+- A Notebook with the solution
+- A PDF with the solution
+
+The second cell of the input Notebook must contain any imports required
+to run the problem as well as definitions that should not be shown to
+the students, either in the problem or the solution. This cell is
+processed so that only imports with ``from`` and matplotlib imports
+remain.
+
+The solution is detected as any cells below a Markdown cell with the
+word "solution" in the cell. Below the solution-delimiting cell, any
+Markdown cell with a level-three header (###) is retained as a divider
+between sections of the solution.
+
+Input files should be named according to the convention::
+
+    homwork-A-B.ipynb
+
+where ``A`` is the homework number and ``B`` is the problem number of
+this input file in the homework assignment.
+
+Methods
+-------
+process(hw_num, problems=None, prefix=None): Process the files for
+    homework number ``hw_num``. Only process the specific problems
+    in the ``problems`` argument.
+
+main(argv=None): Process the command line arguments and run the
+    `process` function
+
+"""
 # Standard library
 import os
 import copy
@@ -16,7 +54,24 @@ c.ExtractOutputPreprocessor.output_filename_template = "{unique_key}_{cell_index
 
 
 class HomeworkPreprocessor(Preprocessor):
+    """Preprocess a homework problem to turn it into an assignment.
+
+    This preprocessor produces output suitable for distribution to
+    students as an assignment. It has three main tasks:
+
+    1. Remove any raw cells from the output entirely
+    2. If images are displayed by the ``Image`` display class, remove
+       that line and replace it with a note that the cell should be
+       deleted before being saved to PDF. This is to avoid issues with
+       images in the nbconvert conversion process.
+    3. Remove any lines from the second cell of the Notebook that are
+       for the instructor use. Lines that are retained are any
+       ``from ... import ...`` lines and any lines with ``matplotlib``
+       import related bits.
+    """
+
     def preprocess(self, nb, resources):
+        """Preprocess the entire notebook."""
         keep_cells = []
         for cell in nb.cells:
             if cell.cell_type != 'raw':
@@ -28,6 +83,7 @@ class HomeworkPreprocessor(Preprocessor):
         return nb, resources
 
     def preprocess_cell(self, cell, resources, index):
+        """Preprocess each cell of the notebook."""
         if cell.cell_type != 'code':
             return cell, resources
 
@@ -55,8 +111,21 @@ class HomeworkPreprocessor(Preprocessor):
 
 
 class SolnRemoverPreprocessor(Preprocessor):
-    def preprocess(self, nb, resources):
+    """Preprocess a homework problem to remove the solution.
 
+    This preprocessor produces output suitable for distribution to
+    students as an assignment. It has one task: remove the solution
+    from the Notebook. The preprocessor looks for a cell with the word
+    'solution' in it, which delimits the beginning of the solution
+    section. Then, for every cell after that, it checks for a level 3
+    header, which delimits the start of a section of the solution, for
+    multi-part problems. All cells between the level 3 headers are
+    replaced with a single code cell that asks the students to write
+    their code and explanation there.
+    """
+
+    def preprocess(self, nb, resources):
+        """Preprocess the entire notebook."""
         keep_cells_idx = []
         for index, cell in enumerate(nb.cells):
             if 'solution' in cell.source.lower():
@@ -106,6 +175,18 @@ solution_nb_exp = NotebookExporter(
 
 
 def process(hw_num, problems=None, prefix=None):
+    """Process the homework problems in ``prefix`` folder.
+
+    Arguments
+    ---------
+    hw_num
+        The number of this homework
+    problems
+        A list of the problems to be processed
+    prefix
+        A `~pathlib.Path` to this homework assignment
+
+    """
     if prefix is None:
         prefix = Path('.')
     else:
@@ -154,6 +235,7 @@ def process(hw_num, problems=None, prefix=None):
 
 def main(argv=None):
     parser = ArgumentParser(description="Convert Jupyter Notebook assignments to PDFs")
+    """Parse arguments and process the homework assignment."""
     parser.add_argument('--hw', type=int, required=True, help="Homework number to convert",
                         dest='hw_num')
     parser.add_argument('-p', '--problems', type=int,
