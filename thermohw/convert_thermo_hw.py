@@ -64,7 +64,8 @@ class SolnRemoverPreprocessor(Preprocessor):
 
         code_cell = copy.deepcopy(nb.cells[1])
         code_cell.execution_count = None
-        code_cell.source = '# Write your code and explanation here to solve the problem\n# Make sure to print your final answer'  # noqa: E501
+        code_cell.source = ('# Write your code and explanation here to solve the problem\n'
+                            '# Make sure to print your final answer')
 
         keep_cells = nb.cells[:keep_cells_idx[0] + 1]
         for i in keep_cells_idx[1:]:
@@ -114,17 +115,17 @@ def process(hw_num, problems=None, prefix=None):
         problems = [prefix/'homework-{}-{}.ipynb'.format(hw_num, i) for i in problems]
     for i, prob in enumerate(problems):
         res = {'unique_key': 'homework-{}-{}'.format(hw_num, i+1)}
-        a_md, resources = assignment_md_exp.from_filename(prob, resources=res)  # noqa: E501
-        s_md, resources = solution_md_exp.from_filename(prob, resources=res)  # noqa: E501
+        a_md, resources = assignment_md_exp.from_filename(prob, resources=res)
+        s_md, resources = solution_md_exp.from_filename(prob, resources=res)
         assignment_md.append(a_md + '\n---\n')
         solution_md.append(s_md + '\n---\n')
 
         fw = FilesWriter(build_directory=str(prefix/'output'))
 
-        assignment_nb, resources = assignment_nb_exp.from_filename(prob, resources=res)  # noqa: E501
+        assignment_nb, resources = assignment_nb_exp.from_filename(prob, resources=res)
         fw.write(assignment_nb, resources, 'homework-{}-{}'.format(hw_num, i+1))
 
-        solution_nb, resources = solution_nb_exp.from_filename(prob, resources=res)  # noqa: E501
+        solution_nb, resources = solution_nb_exp.from_filename(prob, resources=res)
         fw.write(solution_nb, resources, 'homework-{}-{}-soln'.format(hw_num, i+1))
 
     os.chdir(prefix/'output')
