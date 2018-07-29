@@ -1,4 +1,5 @@
-""" A preprocessor that extracts all of the attachments from the notebook file.
+"""A preprocessor that extracts all of the attachments from the notebook file.
+
 The extracted attachments are returned in the 'resources' dictionary.
 
 Based on the ExtractOutputsProcessor in nbconvert... the license for
@@ -31,7 +32,7 @@ software without specific prior written permission.
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
 FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
 DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
 SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
@@ -53,8 +54,8 @@ Jupyter uses a shared copyright model. Each contributor maintains copyright
 over their contributions to Jupyter. But, it is important to note that these
 contributions are typically only changes to the repositories. Thus, the Jupyter
 source code, in its entirety is not the copyright of any single person or
-institution.  Instead, it is the collective copyright of the entire Jupyter
-Development Team.  If individual contributors want to maintain a record of what
+institution. Instead, it is the collective copyright of the entire Jupyter
+Development Team. If individual contributors want to maintain a record of what
 changes/contributions they have specific copyright on, they should indicate
 their copyright in the commit message of the change, when they commit the
 change to one of the Jupyter repositories.
@@ -70,14 +71,15 @@ from binascii import a2b_base64
 import sys
 import os
 
-from traitlets import Unicode, Set
-from nbconvert.preprocessors.base import Preprocessor
+from traitlets import Unicode, Set  # type: ignore
+from nbconvert.preprocessors.base import Preprocessor  # type: ignore
 
 
 class ExtractAttachmentsPreprocessor(Preprocessor):
     """
-    Extracts all of the outputs from the notebook file.  The extracted
-    outputs are returned in the 'resources' dictionary.
+    Extracts all of the outputs from the notebook file.
+
+    The extracted outputs are returned in the 'resources' dictionary.
     """
 
     output_filename_template = Unicode(
@@ -89,8 +91,7 @@ class ExtractAttachmentsPreprocessor(Preprocessor):
     ).tag(config=True)
 
     def preprocess_cell(self, cell, resources, cell_index):
-        """
-        Apply a transformation on each cell,
+        """Apply a transformation on each cell.
 
         Parameters
         ----------
@@ -101,8 +102,8 @@ class ExtractAttachmentsPreprocessor(Preprocessor):
             preprocessors to pass variables into the Jinja engine.
         cell_index : int
             Index of the cell being processed (see base.py)
-        """
 
+        """
         # Get files directory if it has been specified
         output_files_dir = resources.get('output_files_dir', None)
 
