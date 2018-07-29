@@ -37,6 +37,7 @@ main(argv=None): Process the command line arguments and run the
 
 """
 # Standard library
+from typing import Iterable, Dict, List, Sequence, Optional
 import os
 import copy
 from pathlib import Path
@@ -174,33 +175,45 @@ solution_nb_exp = NotebookExporter(
 )
 
 
-def process(hw_num, problems=None, prefix=None):
+def process(hw_num: int,
+            problems_to_do: Optional[Iterable[int]] = None,
+            prefix: Optional[Path] = None,
+            ) -> None:
     """Process the homework problems in ``prefix`` folder.
 
     Arguments
     ---------
     hw_num
         The number of this homework
-    problems
+    problems, optional
         A list of the problems to be processed
-    prefix
-        A `~pathlib.Path` to this homework assignment
+    prefix, optional
+        A `~pathlib.Path` to this homework assignment folder
 
     """
     if prefix is None:
         prefix = Path('.')
+
+    assignment_md: List[str] = []
+    solution_md: List[str] = []
+    problems: Iterable[Path]
+
+    if problems_to_do is None:
+        # The glob syntax here means a the filename must start with
+        # homework-, be followed the homework number, followed by a
+        # dash, then a digit representing the problem number for this
+        # homework number, then any number of characters (in practice
+        # either nothing or, rarely, another digit), then the ipynb
+        # extension. Examples:
+        # homework-1-1.ipynb, homework-10-1.ipynb, homework-3-10.ipynb
+        problems = list(prefix.glob(f'homework-{hw_num}-[0-9]*.ipynb'))
     else:
-        prefix = Path(prefix)
-    assignment_md = []
-    solution_md = []
-    if problems is None:
-        problems = list(prefix.glob('*.ipynb'))
-    else:
-        problems = [prefix/'homework-{}-{}.ipynb'.format(hw_num, i) for i in problems]
-    for i, prob in enumerate(problems):
-        res = {'unique_key': 'homework-{}-{}'.format(hw_num, i+1)}
-        a_md, resources = assignment_md_exp.from_filename(prob, resources=res)
-        s_md, resources = solution_md_exp.from_filename(prob, resources=res)
+        problems = [prefix/f'homework-{hw_num}-{i}.ipynb' for i in problems_to_do]
+
+    for problem in problems:
+        res: Dict[str, str] = {'unique_key': problem.stem}
+        a_md, resources = assignment_md_exp.from_filename(problem, resources=res)
+        s_md, resources = solution_md_exp.from_filename(problem, resources=res)
         assignment_md.append(a_md + '\n---\n')
         solution_md.append(s_md + '\n---\n')
 
@@ -233,9 +246,11 @@ def process(hw_num, problems=None, prefix=None):
     )
 
 
-def main(argv=None):
-    parser = ArgumentParser(description="Convert Jupyter Notebook assignments to PDFs")
+def main(argv: Optional[Sequence[str]] = None) -> None:
     """Parse arguments and process the homework assignment."""
+    parser: ArgumentParser = ArgumentParser(
+        description="Convert Jupyter Notebook assignments to PDFs",
+    )
     parser.add_argument('--hw', type=int, required=True, help="Homework number to convert",
                         dest='hw_num')
     parser.add_argument('-p', '--problems', type=int,
