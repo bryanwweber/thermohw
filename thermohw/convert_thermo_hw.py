@@ -219,29 +219,29 @@ def process(hw_num: int,
 
         fw = FilesWriter(build_directory=str(prefix/'output'))
 
-        assignment_nb, resources = assignment_nb_exp.from_filename(prob, resources=res)
-        fw.write(assignment_nb, resources, 'homework-{}-{}'.format(hw_num, i+1))
+        assignment_nb, resources = assignment_nb_exp.from_filename(problem, resources=res)
+        fw.write(assignment_nb, resources, problem.stem)
 
-        solution_nb, resources = solution_nb_exp.from_filename(prob, resources=res)
-        fw.write(solution_nb, resources, 'homework-{}-{}-soln'.format(hw_num, i+1))
+        solution_nb, resources = solution_nb_exp.from_filename(problem, resources=res)
+        fw.write(solution_nb, resources, problem.stem + '-soln')
 
     os.chdir(prefix/'output')
 
-    with open('homework-{}.md'.format(hw_num), 'w') as md_out:
+    with open(f'homework-{hw_num}.md', 'w') as md_out:
         md_out.write('\n'.join(assignment_md))
 
-    with open('homework-{}-soln.md'.format(hw_num), 'w') as md_out:
+    with open(f'homework-{hw_num}-soln.md', 'w') as md_out:
         md_out.write('\n'.join(solution_md))
 
     pypandoc.convert_text(
         '\n'.join(assignment_md), 'pdf', 'markdown-yaml_metadata_block-implicit_figures',
-        outputfile='homework-{}.pdf'.format(hw_num),
+        outputfile=f'homework-{hw_num}.pdf',
         extra_args=['-V', 'geometry:margin=1in', '--latex-engine=xelatex'],
     )
 
     pypandoc.convert_text(
         '\n'.join(solution_md), 'pdf', 'markdown-yaml_metadata_block-implicit_figures',
-        outputfile='homework-{}-soln.pdf'.format(hw_num),
+        outputfile=f'homework-{hw_num}-soln.pdf',
         extra_args=['-V', 'geometry:margin=1in', '--latex-engine=xelatex'],
     )
 
