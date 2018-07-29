@@ -37,18 +37,17 @@ main(argv=None): Process the command line arguments and run the
 
 """
 # Standard library
-from typing import Iterable, Dict, List, Sequence, Optional
+from typing import Iterable, Dict, Sequence, Optional
 import os
 import copy
 from pathlib import Path
 from argparse import ArgumentParser
 
 # Third Party
-from nbconvert import MarkdownExporter, NotebookExporter, PDFExporter  # type: ignore
+from nbconvert import NotebookExporter, PDFExporter  # type: ignore
 from nbconvert.preprocessors import Preprocessor, ExtractOutputPreprocessor  # type: ignore
 from traitlets.config import Config  # type: ignore
 from nbconvert.writers import FilesWriter  # type: ignore
-import pypandoc  # type: ignore
 
 # Local imports
 from .extract_attachments import ExtractAttachmentsPreprocessor
@@ -154,19 +153,6 @@ class SolnRemoverPreprocessor(Preprocessor):
         return nb, resources
 
 
-assignment_md_exp = MarkdownExporter(
-    preprocessors=[HomeworkPreprocessor,
-                   SolnRemoverPreprocessor,
-                   'jupyter_contrib_nbextensions.nbconvert_support.PyMarkdownPreprocessor',
-                   ExtractOutputPreprocessor(config=c)],
-)
-
-solution_md_exp = MarkdownExporter(
-    preprocessors=[HomeworkPreprocessor,
-                   'jupyter_contrib_nbextensions.nbconvert_support.PyMarkdownPreprocessor',
-                   ExtractOutputPreprocessor(config=c)],
-)
-
 assignment_nb_exp = NotebookExporter(
     preprocessors=[HomeworkPreprocessor,
                    SolnRemoverPreprocessor,
@@ -217,8 +203,6 @@ def process(hw_num: int,
     if prefix is None:
         prefix = Path('.')
 
-    assignment_md: List[str] = []
-    solution_md: List[str] = []
     problems: Iterable[Path]
 
     if problems_to_do is None:
@@ -235,38 +219,19 @@ def process(hw_num: int,
 
     for problem in problems:
         res: Dict[str, str] = {'unique_key': problem.stem}
-        a_md, resources = assignment_md_exp.from_filename(problem, resources=res)
-        s_md, resources = solution_md_exp.from_filename(problem, resources=res)
-        assignment_md.append(a_md + '\n---\n')
-        solution_md.append(s_md + '\n---\n')
-
         fw = FilesWriter(build_directory=str(prefix/'output'))
+
+        assignment_pdf, resources = assignment_pdf_exp.from_filename(problem, resources=res)
+        fw.write(assignment_pdf, resources, problem.stem)
+
+        solution_pdf, resources = solution_pdf_exp.from_filename(problem, resources=res)
+        fw.write(solution_pdf, resources, problem.stem + '-soln')
 
         assignment_nb, resources = assignment_nb_exp.from_filename(problem, resources=res)
         fw.write(assignment_nb, resources, problem.stem)
 
         solution_nb, resources = solution_nb_exp.from_filename(problem, resources=res)
         fw.write(solution_nb, resources, problem.stem + '-soln')
-
-    os.chdir(prefix/'output')
-
-    with open(f'homework-{hw_num}.md', 'w') as md_out:
-        md_out.write('\n'.join(assignment_md))
-
-    with open(f'homework-{hw_num}-soln.md', 'w') as md_out:
-        md_out.write('\n'.join(solution_md))
-
-    pypandoc.convert_text(
-        '\n'.join(assignment_md), 'pdf', 'markdown-yaml_metadata_block-implicit_figures',
-        outputfile=f'homework-{hw_num}.pdf',
-        extra_args=['-V', 'geometry:margin=1in', '--latex-engine=xelatex'],
-    )
-
-    pypandoc.convert_text(
-        '\n'.join(solution_md), 'pdf', 'markdown-yaml_metadata_block-implicit_figures',
-        outputfile=f'homework-{hw_num}-soln.pdf',
-        extra_args=['-V', 'geometry:margin=1in', '--latex-engine=xelatex'],
-    )
 
 
 def main(argv: Optional[Sequence[str]] = None) -> None:

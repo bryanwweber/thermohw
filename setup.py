@@ -24,7 +24,6 @@ except (ImportError, OSError, IOError):
 
 install_requires = [
     'nbconvert',
-    'pypandoc',
     'traitlets',
     'jupyter_contrib_nbextensions',
 ]

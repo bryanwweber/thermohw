@@ -22,7 +22,6 @@ requirements:
   run:
     - python
     - nbconvert
-    - pypandoc
     - traitlets
     - jupyter_contrib_nbextensions
 
