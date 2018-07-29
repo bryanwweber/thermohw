@@ -13,14 +13,7 @@ with open(path.join(here, 'README.md')) as readme_file:
 with open(path.join(here, 'CHANGELOG.md')) as changelog_file:
     changelog = changelog_file.read()
 
-desc = readme + '\n\n' + changelog
-try:
-    import pypandoc
-    long_description = pypandoc.convert_text(desc, 'rst', format='md')
-    with open(path.join(here, 'README.rst'), 'w') as rst_readme:
-        rst_readme.write(long_description)
-except (ImportError, OSError, IOError):
-    long_description = desc
+long_description = readme + '\n\n' + changelog
 
 install_requires = [
     'nbconvert',
