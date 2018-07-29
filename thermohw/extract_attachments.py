@@ -83,7 +83,7 @@ class ExtractAttachmentsPreprocessor(Preprocessor):
     """
 
     output_filename_template = Unicode(
-        "attach_{cell_index}_{name}"
+        "{unique_key}_{cell_index}_{name}"
     ).tag(config=True)
 
     extract_output_types = Set(
@@ -129,7 +129,9 @@ class ExtractAttachmentsPreprocessor(Preprocessor):
 
                 filename = self.output_filename_template.format(
                     cell_index=cell_index,
-                    name=name,)
+                    name=name,
+                    unique_key=resources.get('unique_key', ''),
+                )
 
                 if output_files_dir is not None:
                     filename = os.path.join(output_files_dir, filename)

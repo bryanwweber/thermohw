@@ -44,14 +44,20 @@ from pathlib import Path
 from argparse import ArgumentParser
 
 # Third Party
-from nbconvert import MarkdownExporter, NotebookExporter  # type: ignore
+from nbconvert import MarkdownExporter, NotebookExporter, PDFExporter  # type: ignore
 from nbconvert.preprocessors import Preprocessor, ExtractOutputPreprocessor  # type: ignore
 from traitlets.config import Config  # type: ignore
 from nbconvert.writers import FilesWriter  # type: ignore
 import pypandoc  # type: ignore
 
+# Local imports
+from .extract_attachments import ExtractAttachmentsPreprocessor
+
 c = Config()
-c.ExtractOutputPreprocessor.output_filename_template = "{unique_key}_{cell_index}_{index}.jpeg"
+c.ExtractOutputPreprocessor.output_filename_template = "{unique_key}_{cell_index}_{index}"
+
+here = os.path.abspath(os.path.dirname(__file__))
+c.PDFExporter.template_file = os.path.join(here, 'homework.tpl')
 
 
 class HomeworkPreprocessor(Preprocessor):
@@ -172,6 +178,23 @@ solution_nb_exp = NotebookExporter(
     preprocessors=[HomeworkPreprocessor,
                    'jupyter_contrib_nbextensions.nbconvert_support.PyMarkdownPreprocessor',
                    ExtractOutputPreprocessor(config=c)],
+)
+
+assignment_pdf_exp = PDFExporter(
+    preprocessors=[HomeworkPreprocessor,
+                   SolnRemoverPreprocessor,
+                   'jupyter_contrib_nbextensions.nbconvert_support.PyMarkdownPreprocessor',
+                   ExtractAttachmentsPreprocessor(config=c),
+                   ExtractOutputPreprocessor(config=c)],
+    config=c,
+)
+
+solution_pdf_exp = PDFExporter(
+    preprocessors=[HomeworkPreprocessor,
+                   'jupyter_contrib_nbextensions.nbconvert_support.PyMarkdownPreprocessor',
+                   ExtractAttachmentsPreprocessor(config=c),
+                   ExtractOutputPreprocessor(config=c)],
+    config=c,
 )
 
 
