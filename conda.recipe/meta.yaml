@@ -29,9 +29,9 @@ test:
   imports:
     - thermohw
 
-  requires:
-    - pytest >=3.2.0
-    - pytest-cov >=2.3.1
+  # requires:
+  #   - pytest >=3.2.0
+  #   - pytest-cov >=2.3.1
 
   commands:
     # - pytest -vv --pyargs thermohw

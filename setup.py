@@ -28,10 +28,10 @@ install_requires = [
     'jupyter_contrib_nbextensions',
 ]
 
-tests_require = [
-    'pytest>=3.2.0',
-    'pytest-cov',
-]
+# tests_require = [
+#     'pytest>=3.2.0',
+#     'pytest-cov',
+# ]
 
 setup(
     name='thermohw',
@@ -56,7 +56,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Topic :: Scientific/Engineering :: Chemistry',
     ],
-    tests_require=tests_require,
+    # tests_require=tests_require,
     python_requires='~=3.6',
     entry_points={
         'console_scripts': [
