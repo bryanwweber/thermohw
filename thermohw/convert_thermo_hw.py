@@ -174,6 +174,7 @@ assignment_pdf_exp = PDFExporter(
                    ExtractOutputPreprocessor(config=c)],
     config=c,
 )
+assignment_pdf_exp.writer.build_directory = '.'
 
 solution_pdf_exp = PDFExporter(
     preprocessors=[HomeworkPreprocessor,
@@ -182,6 +183,7 @@ solution_pdf_exp = PDFExporter(
                    ExtractOutputPreprocessor(config=c)],
     config=c,
 )
+solution_pdf_exp.writer.build_directory = '.'
 
 
 def process(hw_num: int,
