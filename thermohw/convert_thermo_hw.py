@@ -1,5 +1,5 @@
 """
-This module converts a Jupyter Notebook-format homework problem.
+Convert a Jupyter Notebook-format homework problem.
 
 The single input Jupyter Notebook is converted into four files:
 
