@@ -196,7 +196,7 @@ def process(hw_num: int,
     ---------
     hw_num
         The number of this homework
-    problems, optional
+    problems_to_do, optional
         A list of the problems to be processed
     prefix, optional
         A `~pathlib.Path` to this homework assignment folder
