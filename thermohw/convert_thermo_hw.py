@@ -218,19 +218,22 @@ def process(hw_num: int,
         problems = [prefix/f'homework-{hw_num}-{i}.ipynb' for i in problems_to_do]
 
     for problem in problems:
+        print('Working on: ', problem)
         res: Dict[str, str] = {'unique_key': problem.stem}
-        fw = FilesWriter(build_directory=str(prefix/'output'))
+        build_directory: str = str((prefix/'output').resolve())
+        fw = FilesWriter(build_directory=build_directory)
+        problem_filename = str(problem.resolve())
 
-        assignment_pdf, resources = assignment_pdf_exp.from_filename(problem, resources=res)
+        assignment_pdf, resources = assignment_pdf_exp.from_filename(problem_filename, resources=res)
         fw.write(assignment_pdf, resources, problem.stem)
 
-        solution_pdf, resources = solution_pdf_exp.from_filename(problem, resources=res)
+        solution_pdf, resources = solution_pdf_exp.from_filename(problem_filename, resources=res)
         fw.write(solution_pdf, resources, problem.stem + '-soln')
 
-        assignment_nb, resources = assignment_nb_exp.from_filename(problem, resources=res)
+        assignment_nb, resources = assignment_nb_exp.from_filename(problem_filename, resources=res)
         fw.write(assignment_nb, resources, problem.stem)
 
-        solution_nb, resources = solution_nb_exp.from_filename(problem, resources=res)
+        solution_nb, resources = solution_nb_exp.from_filename(problem_filename, resources=res)
         fw.write(solution_nb, resources, problem.stem + '-soln')
 
 
