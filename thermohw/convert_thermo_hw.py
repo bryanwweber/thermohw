@@ -37,18 +37,21 @@ main(argv=None): Process the command line arguments and run the
 
 """
 # Standard library
-from typing import Iterable, Dict, Sequence, Optional
+from typing import Iterable, Dict, Sequence, Optional, List, Any
 import os
 import copy
 from pathlib import Path
 from argparse import ArgumentParser
 from zipfile import ZipFile
+from io import BytesIO
+from datetime import date
 
 # Third Party
 from nbconvert import NotebookExporter, PDFExporter  # type: ignore
 from nbconvert.preprocessors import Preprocessor, ExtractOutputPreprocessor  # type: ignore
 from traitlets.config import Config  # type: ignore
 from nbconvert.writers import FilesWriter  # type: ignore
+from pdfrw import PdfReader, PdfWriter  # type: ignore
 
 # Local imports
 from .extract_attachments import ExtractAttachmentsPreprocessor
@@ -58,6 +61,26 @@ c.ExtractOutputPreprocessor.output_filename_template = "{unique_key}_{cell_index
 
 here = os.path.abspath(os.path.dirname(__file__))
 c.PDFExporter.template_file = os.path.join(here, 'homework.tpl')
+
+
+def combine_pdf_as_bytes(pdfs: List[BytesIO]):
+    """Combine PDFs and return a bytestring with the result.
+
+    Arguments
+    ---------
+    pdfs
+        A list of BytesIO representations of PDFs
+
+    """
+    writer = PdfWriter()
+    for pdf in pdfs:
+        writer.addpages(PdfReader(pdf).pages)
+    bio = BytesIO()
+    writer.write(bio)
+    bio.seek(0)
+    output = bio.read()
+    bio.close()
+    return output
 
 
 class HomeworkPreprocessor(Preprocessor):
@@ -228,16 +251,19 @@ def process(hw_num: int,
     assignment_zip_name = output_directory/f'homework-{hw_num}.zip'
     solution_zip_name = output_directory/f'homework-{hw_num}-soln.zip'
 
+    assignment_pdfs: List[BytesIO] = []
+    solution_pdfs: List[BytesIO] = []
+
     for problem in problems:
         print('Working on: ', problem)
         res: Dict[str, str] = {'unique_key': problem.stem}
         problem_fname = str(problem.resolve())
 
-        assignment_pdf, resources = assignment_pdf_exp.from_filename(problem_fname, resources=res)
-        fw.write(assignment_pdf, resources, problem.stem)
+        assignment_pdf, _ = assignment_pdf_exp.from_filename(problem_fname, resources=res)
+        assignment_pdfs.append(BytesIO(assignment_pdf))
 
-        solution_pdf, resources = solution_pdf_exp.from_filename(problem_fname, resources=res)
-        fw.write(solution_pdf, resources, problem.stem + '-soln')
+        solution_pdf, _ = solution_pdf_exp.from_filename(problem_fname, resources=res)
+        solution_pdfs.append(BytesIO(solution_pdf))
 
         assignment_nb, _ = assignment_nb_exp.from_filename(problem_fname, resources=res)
 
@@ -248,6 +274,19 @@ def process(hw_num: int,
 
         with ZipFile(solution_zip_name, mode='a') as zip_file:  # type: ignore
             zip_file.writestr(problem.stem + '-soln' + problem.suffix, solution_nb)
+
+    resources: Dict[str, Any] = {
+        'metadata': {
+            'name': f'homework-{hw_num}',
+            'path': str(prefix),
+            'modified_date': date.today().strftime('%B %d, %Y'),
+        },
+        'output_extension': '.pdf',
+    }
+    fw.write(combine_pdf_as_bytes(assignment_pdfs), resources, f'homework-{hw_num}')
+
+    resources['metadata']['name'] = f'homework-{hw_num}-soln'
+    fw.write(combine_pdf_as_bytes(solution_pdfs), resources, f'homework-{hw_num}-soln')
 
 
 def main(argv: Optional[Sequence[str]] = None) -> None:

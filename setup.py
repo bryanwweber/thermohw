@@ -19,6 +19,7 @@ install_requires = [
     'nbconvert',
     'traitlets',
     'jupyter_contrib_nbextensions',
+    'pdfrw',
 ]
 
 # tests_require = [

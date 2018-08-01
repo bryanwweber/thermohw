@@ -24,6 +24,7 @@ requirements:
     - nbconvert
     - traitlets
     - jupyter_contrib_nbextensions
+    - pdfrw
 
 test:
   imports:
