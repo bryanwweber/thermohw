@@ -227,18 +227,18 @@ def process(hw_num: int,
     for problem in problems:
         print('Working on: ', problem)
         res: Dict[str, str] = {'unique_key': problem.stem}
-        problem_filename = str(problem.resolve())
+        problem_fname = str(problem.resolve())
 
-        assignment_pdf, resources = assignment_pdf_exp.from_filename(problem_filename, resources=res)
+        assignment_pdf, resources = assignment_pdf_exp.from_filename(problem_fname, resources=res)
         fw.write(assignment_pdf, resources, problem.stem)
 
-        solution_pdf, resources = solution_pdf_exp.from_filename(problem_filename, resources=res)
+        solution_pdf, resources = solution_pdf_exp.from_filename(problem_fname, resources=res)
         fw.write(solution_pdf, resources, problem.stem + '-soln')
 
-        assignment_nb, resources = assignment_nb_exp.from_filename(problem_filename, resources=res)
+        assignment_nb, resources = assignment_nb_exp.from_filename(problem_fname, resources=res)
         fw.write(assignment_nb, resources, problem.stem)
 
-        solution_nb, resources = solution_nb_exp.from_filename(problem_filename, resources=res)
+        solution_nb, resources = solution_nb_exp.from_filename(problem_fname, resources=res)
         fw.write(solution_nb, resources, problem.stem + '-soln')
 
 
