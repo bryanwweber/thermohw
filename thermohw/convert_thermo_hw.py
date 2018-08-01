@@ -42,6 +42,7 @@ import os
 import copy
 from pathlib import Path
 from argparse import ArgumentParser
+from zipfile import ZipFile
 
 # Third Party
 from nbconvert import NotebookExporter, PDFExporter  # type: ignore
@@ -224,6 +225,9 @@ def process(hw_num: int,
     output_directory: Path = (prefix/'output').resolve()
     fw = FilesWriter(build_directory=str(output_directory))
 
+    assignment_zip_name = output_directory/f'homework-{hw_num}.zip'
+    solution_zip_name = output_directory/f'homework-{hw_num}-soln.zip'
+
     for problem in problems:
         print('Working on: ', problem)
         res: Dict[str, str] = {'unique_key': problem.stem}
@@ -235,11 +239,15 @@ def process(hw_num: int,
         solution_pdf, resources = solution_pdf_exp.from_filename(problem_fname, resources=res)
         fw.write(solution_pdf, resources, problem.stem + '-soln')
 
-        assignment_nb, resources = assignment_nb_exp.from_filename(problem_fname, resources=res)
-        fw.write(assignment_nb, resources, problem.stem)
+        assignment_nb, _ = assignment_nb_exp.from_filename(problem_fname, resources=res)
 
-        solution_nb, resources = solution_nb_exp.from_filename(problem_fname, resources=res)
-        fw.write(solution_nb, resources, problem.stem + '-soln')
+        with ZipFile(assignment_zip_name, mode='a') as zip_file:  # type: ignore
+            zip_file.writestr(problem.name, assignment_nb)
+
+        solution_nb, _ = solution_nb_exp.from_filename(problem_fname, resources=res)
+
+        with ZipFile(solution_zip_name, mode='a') as zip_file:  # type: ignore
+            zip_file.writestr(problem.stem + '-soln' + problem.suffix, solution_nb)
 
 
 def main(argv: Optional[Sequence[str]] = None) -> None:
