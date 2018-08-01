@@ -219,6 +219,8 @@ def process(hw_num: int,
     else:
         problems = [prefix/f'homework-{hw_num}-{i}.ipynb' for i in problems_to_do]
 
+    problems = sorted(problems, key=lambda k: k.stem[-1])
+
     for problem in problems:
         print('Working on: ', problem)
         res: Dict[str, str] = {'unique_key': problem.stem}
