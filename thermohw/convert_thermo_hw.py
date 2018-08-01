@@ -221,11 +221,12 @@ def process(hw_num: int,
 
     problems = sorted(problems, key=lambda k: k.stem[-1])
 
+    output_directory: Path = (prefix/'output').resolve()
+    fw = FilesWriter(build_directory=str(output_directory))
+
     for problem in problems:
         print('Working on: ', problem)
         res: Dict[str, str] = {'unique_key': problem.stem}
-        build_directory: str = str((prefix/'output').resolve())
-        fw = FilesWriter(build_directory=build_directory)
         problem_filename = str(problem.resolve())
 
         assignment_pdf, resources = assignment_pdf_exp.from_filename(problem_filename, resources=res)
