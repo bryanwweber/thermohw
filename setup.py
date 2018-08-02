@@ -56,5 +56,6 @@ setup(
         'console_scripts': [
             'convert_thermo_hw=thermohw.convert_thermo_hw:main',
         ],
-    }
+    },
+    include_package_data=True,
 )
