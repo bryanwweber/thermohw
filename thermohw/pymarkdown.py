@@ -43,7 +43,6 @@ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 """
 
 import re
@@ -80,6 +79,7 @@ class PyMarkdownPreprocessor(Preprocessor):
             preprocessors to pass variables into the Jinja engine.
         cell_index : int
             Index of the cell being processed (see base.py)
+
         """
         if cell.cell_type == "markdown":
             if hasattr(cell['metadata'], 'variables'):
