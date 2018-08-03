@@ -10,9 +10,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 ### Fixed
-- PyPI deploy password for Travis CI must be encrypted with `--pro` flag
 
 ### Removed
+
+## [0.2.4] - 2018-AUG-03
+### Fixed
+- PyPI deploy password for Travis CI must be encrypted with `--pro` flag
 
 ## [0.2.3] - 2018-AUG-03
 ### Fixed
@@ -61,7 +64,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Convert Jupyter Notebook to a set of Notebooks, with and without solutions
 - README with instructions for use
 
-[Unreleased]: https://github.com/bryanwweber/thermohw/compare/v0.2.3...HEAD
+[Unreleased]: https://github.com/bryanwweber/thermohw/compare/v0.2.4...HEAD
+[0.2.4]: https://github.com/bryanwweber/thermohw/compare/v0.2.3...v0.2.4
 [0.2.3]: https://github.com/bryanwweber/thermohw/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/bryanwweber/thermohw/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/bryanwweber/thermohw/compare/v0.2.0...v0.2.1
