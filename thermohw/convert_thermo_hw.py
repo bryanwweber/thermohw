@@ -28,8 +28,8 @@ this input file in the homework assignment.
 
 Methods
 -------
-process(hw_num, problems=None, prefix=None): Process the files for
-    homework number ``hw_num``. Only process the specific problems
+process(hw_num, problems_to_do=None, prefix=None): Process the files
+    for homework number ``hw_num``. Only process the specific problems
     in the ``problems`` argument.
 
 main(argv=None): Process the command line arguments and run the
