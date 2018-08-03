@@ -29,10 +29,13 @@ running
 ```bash
 convert_thermo_hw --hw 1
 ```
-will convert all of the `.ipynb` files in the`homework-1` directory. You can also specify which problems should be converted by the `problems` argument, which takes a list of integers
+
+will convert all of the `.ipynb` files in the `homework-1` directory. You can also specify which problems should be converted by the `problems` argument, which takes a list of integers
+
 ```bash
 convert_thermo_hw --hw 2 --problems 1 3 4
 ```
+
 would convert problems 1, 3, and 4 in `homework-2`.
 
 The output files are placed in a directory called `output` in the `homework-N` directory.
