@@ -2,7 +2,7 @@ sudo: false
 language: generic
 
 # Only build on tags
-# if: tag IS present
+if: tag IS present
 
 env:
   global:

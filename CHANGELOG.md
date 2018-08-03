@@ -13,16 +13,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Removed
 
+## [0.2.3] - 2018-AUG-03
+### Fixed
+- Fix anaconda.org upload token decryption
+
 ## [0.2.2] - 2018-AUG-03
-### Added
-
-### Changed
-
 ### Fixed
 - Typo in README.md
 - Conda recipe description was not valid YAML
-
-### Removed
 
 ## [0.2.1] - 2018-AUG-03
 ### Added
@@ -62,7 +60,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Convert Jupyter Notebook to a set of Notebooks, with and without solutions
 - README with instructions for use
 
-[Unreleased]: https://github.com/bryanwweber/thermohw/compare/v0.2.2...HEAD
+[Unreleased]: https://github.com/bryanwweber/thermohw/compare/v0.2.3...HEAD
+[0.2.3]: https://github.com/bryanwweber/thermohw/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/bryanwweber/thermohw/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/bryanwweber/thermohw/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/bryanwweber/thermohw/compare/v0.1.0...v0.2.0
