@@ -39,12 +39,12 @@ test:
     - convert_thermo_hw --help
 
 about:
-  home: data['url']
+  home: {{ data['url'] }}
   license: BSD 3-Clause
   license_file: LICENSE
   license_family: BSD
 
-  summary: data['description']
-  description: data['long_description']
+  summary: {{ data['description'] }}
+  description: {{ data['long_description'] }}
   doc_url: https://bryanwweber.github.io/thermohw
-  dev_url: data['url']
+  dev_url: {{ data['url'] }}

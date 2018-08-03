@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 ### Fixed
+- Fix accessing Jinja variables in `conda.recipe/meta.yaml`
 
 ### Removed
 
