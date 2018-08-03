@@ -55,6 +55,7 @@ from pdfrw import PdfReader, PdfWriter  # type: ignore
 
 # Local imports
 from .extract_attachments import ExtractAttachmentsPreprocessor
+from .pymarkdown import PyMarkdownPreprocessor
 
 c = Config()
 c.ExtractOutputPreprocessor.output_filename_template = "{unique_key}_{cell_index}_{index}"
@@ -180,20 +181,20 @@ class SolnRemoverPreprocessor(Preprocessor):
 assignment_nb_exp = NotebookExporter(
     preprocessors=[HomeworkPreprocessor,
                    SolnRemoverPreprocessor,
-                   'jupyter_contrib_nbextensions.nbconvert_support.PyMarkdownPreprocessor',
+                   PyMarkdownPreprocessor,
                    ExtractOutputPreprocessor(config=c)],
 )
 
 solution_nb_exp = NotebookExporter(
     preprocessors=[HomeworkPreprocessor,
-                   'jupyter_contrib_nbextensions.nbconvert_support.PyMarkdownPreprocessor',
+                   PyMarkdownPreprocessor,
                    ExtractOutputPreprocessor(config=c)],
 )
 
 assignment_pdf_exp = PDFExporter(
     preprocessors=[HomeworkPreprocessor,
                    SolnRemoverPreprocessor,
-                   'jupyter_contrib_nbextensions.nbconvert_support.PyMarkdownPreprocessor',
+                   PyMarkdownPreprocessor,
                    ExtractAttachmentsPreprocessor(config=c),
                    ExtractOutputPreprocessor(config=c)],
     config=c,
@@ -202,7 +203,7 @@ assignment_pdf_exp.writer.build_directory = '.'
 
 solution_pdf_exp = PDFExporter(
     preprocessors=[HomeworkPreprocessor,
-                   'jupyter_contrib_nbextensions.nbconvert_support.PyMarkdownPreprocessor',
+                   PyMarkdownPreprocessor,
                    ExtractAttachmentsPreprocessor(config=c),
                    ExtractOutputPreprocessor(config=c)],
     config=c,
