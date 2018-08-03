@@ -31,6 +31,7 @@ setup(
     name='thermohw',
     version=__version__,  # noqa: F821
     description='Package for converting thermo homework assignments',
+    long_description_content_type='text/markdown',
     long_description=long_description,
     author='Bryan W. Weber',
     author_email='bryan.w.weber@gmail.com',
