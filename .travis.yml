@@ -1,0 +1,38 @@
+sudo: false
+language: generic
+
+# Only build on tags
+if: tag IS present
+
+env:
+  global:
+    secure: xkwCSGjaO2MDSEChgqfnBMTd7NxqWeoOxhie4UgcfYMkG4Ty9xQlhDP3KkX04cAAzFybwJ6MNURVI3iB+4pjMNlyXW1qpOKfgrbL5+R2WH/p5g0nuUmK9exLp+zcv+fX3LBJg3ukZUXmW6dFnXNfEekWsqAQKZfbhZZPJ2dAcg3tOMvoMjglbBh80VVetqsGIxEqFZh5uBaFzKJhVWza1RXyF5fjp8NKLyPRDM05+gGFDimVjKEBHjMuzjAFmcoTF55EV4Tn7aAWxHEe1UlRQ9fdkaCYpz3z07r+HHx1ZoKHKDdNDEWtTWq9KNSed1O5bdmN6fahRauJLKw0t2qA5Ghg1xfONC+acXzitsoZD/qv0hqw4J4vpvwL47tFTxY2+90ip6NFgTTO0ATXkccAa7awcYKutyhw8S/wqoRYCF13qRQR5FNEa7m1ASKdVXQtkN4JNTWQOSB29Npc9m6C1Q3A2RJ0oZjZhEzQPAj079KE9i12dWUzGQlPe+fFT+ut+Ctj11uhFFQvTsJXsF4qJ0+uPh1eZD02TG3OstrX5aMNxg+eUeEpeCVZFahEuzO9qoW2mGYUM85io3Ir5KkVvqUOlL92A3PUaVnmZgCD8o1bf6QDd6sxqomDqgiHPNQmr3divopvHIB5kcKgVeY70Ij19LLze9iAQgAWk9CHF2g=
+
+install:
+  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - rm miniconda.sh
+  - source $HOME/miniconda/etc/profile.d/conda.sh && conda activate
+  - conda config --set always_yes yes --set changeps1 no
+  - conda update -q conda
+  - conda update -q --all
+  - conda config --append channels conda-forge
+  - conda config --add channels bryanwweber
+  - conda install conda-build anaconda-client
+  - conda info -a
+  - conda list
+
+script:
+  - set -e
+  - conda build conda.recipe;
+  - anaconda -t $ANACONDA_TOKEN upload $HOME/miniconda/conda-bld/*/thermohw*.tar.bz2;
+
+deploy:
+  provider: pypi
+  user: bryanwweber
+  on:
+    tags: true
+  distributions: sdist bdist_wheel
+  skip_upload_docs: true
+  password:
+    secure: FZ63wE5250Z1pXcLf+rFn/pJU+vhaVOBA4Ho7LpyTEL76LreFst3Z8jfPGKu7Ab1kp9HM4NOvKrqB2G40o5bXzim9dgEh3b0cx6AAX5hHKmUbMq8CPljBWjMsjm7m04a0lnqN09iecdPKe84waKrxV9Jpsqh/fnm0Mita/QghfbBhL6Hq82qjsbzsnTL07qUnOWxdFPft6WoI1Wnmn220XYYo8u/sjYhUwji3FPHx9P7qLWWiblDO1js3Gk6fTYKOTBIHblhZLAxZET508P87hhJT3uKO3XOfRCj+XX2Wdu3Hv4InDbBUdeyutD8jp5m+GWEHfpKnYJ2C0ScajxeannthtnLL1Ce9irFsm77wDNu5+Kmye/pURBh/guFPgb8KnCuLDzfMM7OfvOMzQgY2jyAQ22jnFGRpFHefo6GzobKHxnuPtU93Utl4Tdslv+on7YM3gaN17nxQZevMiQJFeAQoROopGtSpFitg8zOjHIi15q63wR8acSBXRj/bt8QahYqmGmeToJ5h9VnIKQciBQHt4CW9cctPRS4RHWc4XP8z2dh+cxG5PrbvgVA3urckkvLNaRCjwT/80cHqwQJvKozG9N1L09UYSwreALuf6cJcJuVdaTfXDB9RO+Pe+1WVUo+YfmIvq/GPGGDe8iGlJi8LQFwQ4h5VxSF+xUQsf0=
