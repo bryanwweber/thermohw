@@ -16,10 +16,9 @@ with open(path.join(here, 'CHANGELOG.md')) as changelog_file:
 long_description = readme + '\n\n' + changelog
 
 install_requires = [
-    'nbconvert',
-    'traitlets',
-    'jupyter_contrib_nbextensions',
-    'pdfrw',
+    'nbconvert>=5.3,<6.0',
+    'traitlets>=4.3,<5.0',
+    'pdfrw>=0.4,<0.5',
 ]
 
 # tests_require = [

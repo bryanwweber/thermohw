@@ -21,11 +21,10 @@ requirements:
     - pip
 
   run:
-    - python
-    - nbconvert
-    - traitlets
-    - jupyter_contrib_nbextensions
-    - pdfrw
+    - python >=3.6
+    - nbconvert >=5.3,<6.0
+    - traitlets >=4.3,<5.0
+    - pdfrw >=0.4,<0.5
 
 test:
   imports:
