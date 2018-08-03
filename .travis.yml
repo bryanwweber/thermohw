@@ -18,7 +18,7 @@ install:
   - conda update -q --all
   - conda config --append channels conda-forge
   - conda config --add channels bryanwweber
-  - conda install conda-build anaconda-client
+  - conda install conda-build anaconda-client conda-verify
   - conda info -a
   - conda list
 
