@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Install `conda-verify` on Travis CI
 
 ### Changed
+- Change Python version dependency in `conda.recipe/meta.yaml` to be less the 4.0
 
 ### Fixed
 - Fix accessing Jinja variables in `conda.recipe/meta.yaml`
