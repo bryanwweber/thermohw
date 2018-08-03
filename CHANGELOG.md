@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Typo in README.md
+- Conda recipe description was not valid YAML
 
 ### Removed
 
