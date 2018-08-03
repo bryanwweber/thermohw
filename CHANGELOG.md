@@ -6,10 +6,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Add Travis CI configuration
+- Include the `homework.tpl` template file with the distribution
+- Appropriate classes are now exported in `__init__.py`
 
 ### Changed
+- Use `PyMarkdownPreprocessor` from our own module to avoid having `jupyter_contrib_nbextensions` as a dependency
+- Set the `build_directory` of the `PDFExporter` `FileWriter` instance to prevent writing intermediate files in the local directory
+- Sort the list of problems to be processed by problem number
+- Automatically write the Notebook outputs to a zip file
+- Automatically combine the PDF outputs to a single PDF file
+- Refactor the processing loop to avoid creating the `FilesWriter` on every iteration
 
 ### Fixed
+- Fix warnings about docstrings
+- Fix that paths must be resolved to be processed
+- Fix typos in docstrings
+- Specify that the `long_description` content for PyPI is Markdown formatted
 
 ### Removed
 
