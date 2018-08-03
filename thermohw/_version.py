@@ -1,7 +1,5 @@
 """The version of thermohw."""
 from typing import Tuple
 
-__version_info__: Tuple[int, int, int] = (0, 1, 0)
-__version__: str = '.'.join(map(str, __version_info__[:3]))
-if len(__version_info__) == 4:
-    __version__ += __version_info__[-1]
+__version_info__: Tuple[int, int, int, str] = (0, 2, 0, '')
+__version__ = '.'.join([str(v) for v in __version_info__ if str(v)])

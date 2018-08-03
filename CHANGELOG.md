@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+### Fixed
+
+### Removed
+
+## [0.2.0] - 2018-AUG-03
+### Added
 - Add Travis CI configuration
 - Include the `homework.tpl` template file with the distribution
 - Appropriate classes are now exported in `__init__.py`
@@ -24,13 +33,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fix typos in docstrings
 - Specify that the `long_description` content for PyPI is Markdown formatted
 
-### Removed
-
 ## [0.1.0] - 2018-JUL-29
 ### Added
 - Convert Jupyter Notebook to PDF with and without solutions
 - Convert Jupyter Notebook to a set of Notebooks, with and without solutions
 - README with instructions for use
 
-[Unreleased]: https://github.com/bryanwweber/thermohw/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/bryanwweber/thermohw/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/bryanwweber/thermohw/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/bryanwweber/thermohw/compare/937175f68b1bd09597d3d91321772267ec068cae...v0.1.0
