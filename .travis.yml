@@ -2,11 +2,11 @@ sudo: false
 language: generic
 
 # Only build on tags
-if: tag IS present
+# if: tag IS present
 
 env:
   global:
-    secure: xkwCSGjaO2MDSEChgqfnBMTd7NxqWeoOxhie4UgcfYMkG4Ty9xQlhDP3KkX04cAAzFybwJ6MNURVI3iB+4pjMNlyXW1qpOKfgrbL5+R2WH/p5g0nuUmK9exLp+zcv+fX3LBJg3ukZUXmW6dFnXNfEekWsqAQKZfbhZZPJ2dAcg3tOMvoMjglbBh80VVetqsGIxEqFZh5uBaFzKJhVWza1RXyF5fjp8NKLyPRDM05+gGFDimVjKEBHjMuzjAFmcoTF55EV4Tn7aAWxHEe1UlRQ9fdkaCYpz3z07r+HHx1ZoKHKDdNDEWtTWq9KNSed1O5bdmN6fahRauJLKw0t2qA5Ghg1xfONC+acXzitsoZD/qv0hqw4J4vpvwL47tFTxY2+90ip6NFgTTO0ATXkccAa7awcYKutyhw8S/wqoRYCF13qRQR5FNEa7m1ASKdVXQtkN4JNTWQOSB29Npc9m6C1Q3A2RJ0oZjZhEzQPAj079KE9i12dWUzGQlPe+fFT+ut+Ctj11uhFFQvTsJXsF4qJ0+uPh1eZD02TG3OstrX5aMNxg+eUeEpeCVZFahEuzO9qoW2mGYUM85io3Ir5KkVvqUOlL92A3PUaVnmZgCD8o1bf6QDd6sxqomDqgiHPNQmr3divopvHIB5kcKgVeY70Ij19LLze9iAQgAWk9CHF2g=
+    secure: PNrNZupNoqnRGx3RYK5MY+18ZzQcit7J+mCfYdCFwjVNizWRgqqbclg0kRe2cyvL6Gnx+dDpkf8bhgCf8jIA42RGH9j4IIb5NNOTxtrJzpAyKsumsNW8YcqISU6dYYssJbXhjJNLVmF54s1hMSuXB8K1Kkj6roV1Qa8rqjDwZPjMjNciTACrw+/Vrgmq0A4ZEIka2Ebg3PDuPE91ibNADjnJkPDH054MhRL5PMx9gdN/eNWnp2Pp5+iMKt41nb76v5kewD8QiZ+inzyrbElvezjyjjzcqtUKZjDdDLKqJ9jDwZkeIkTuC8DuuptPsJ0zSscPrAvqmFI5iKlItgv5zO8nGaUD5T03wW+C3GB3ZZ5JvD68vSbLGPU8RHbdb9ywKObSPLElsSEJzmwMk0uNrEP33UQZGum/a4qAUtjxw5D/ViXJzeGr1Kc9RWYlCuTOfNU6jFs4QakW//dNNGOb1OF7wiX/+HlyGUOofeW79B7uV2mZzyC7PS/kHq/A8jC09JvZCo+kEgRmgO4kzeABO1tXXIjcUelEcwEpHLBOIHcEiMLduKgPbx/s3tTEIXU3jiibkJ5jrMgIsbZBpm1IANTDrctyrNpC7k9+D6uWIkF6bEGVo65heDqRsBEnn5Lcs2xhb2kVH9G3fbCntDVZNS1QqTrrU2WjpTTiDvn0UXk=
 
 install:
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
@@ -17,15 +17,14 @@ install:
   - conda update -q conda
   - conda update -q --all
   - conda config --append channels conda-forge
-  - conda config --add channels bryanwweber
   - conda install conda-build anaconda-client conda-verify
   - conda info -a
   - conda list
 
 script:
   - set -e
-  - conda build conda.recipe;
-  - anaconda -t $ANACONDA_TOKEN upload $HOME/miniconda/conda-bld/*/thermohw*.tar.bz2;
+  - conda build conda.recipe
+  - anaconda -t $ANACONDA_TOKEN upload $HOME/miniconda/conda-bld/*/thermohw*.tar.bz2
 
 deploy:
   provider: pypi
