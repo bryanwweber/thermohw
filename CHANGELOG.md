@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 ### Fixed
+- PyPI deploy password for Travis CI must be encrypted with `--pro` flag
 
 ### Removed
 
