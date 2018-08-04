@@ -1,3 +1,20 @@
+"""Preprocessors for homework assignments.
+
+This module contains the preprocessors that are used to convert
+Notebooks into homework assignments.
+
+Classes
+-------
+HomeworkPreprocessor:
+    Preprocess a homework problem for notes and other things that don't
+    belong in an assignment.
+
+SolnRemoverPreprocessor:
+    Preprocess the Notebook to remove the solution section and replace
+    it with headings for solution parts.
+
+"""
+
 # Standard Library
 import copy
 

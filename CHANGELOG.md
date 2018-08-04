@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `setup.cfg` file added to configure some metadata
 - Add `flake8` configuration to `setup.cfg`
 - More keywords to `setup` function in `setup.py`
+- Module docstring for the new `preprocessors` module
 
 ### Changed
 - The `HomeworkPreprocessor` and `SolnRemoverPreprocessor` are moved from `convert_thermo_hw` module to `preprocessors` module
