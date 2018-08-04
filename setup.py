@@ -38,7 +38,7 @@ setup(
     packages=find_packages(),
     install_requires=install_requires,
     license='BSD-3-Clause',
-    keywords=['thermodynamics'],
+    keywords=['thermodynamics homework pdf jupyter notebook'],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
@@ -48,6 +48,7 @@ setup(
         'Natural Language :: English',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Topic :: Scientific/Engineering :: Chemistry',
     ],
     # tests_require=tests_require,
@@ -58,4 +59,9 @@ setup(
         ],
     },
     include_package_data=True,
+    zip_safe=False,
+    project_urls={
+        'Bug Reports': 'https://github.com/bryanwweber/thermohw/issues',
+        'Source': 'https://github.com/bryanwweber/thermohw/',
+    },
 )
