@@ -82,33 +82,37 @@ def combine_pdf_as_bytes(pdfs: List[BytesIO]):
 
 
 assignment_nb_exp = NotebookExporter(
-    preprocessors=[HomeworkPreprocessor,
-                   SolnRemoverPreprocessor,
-                   PyMarkdownPreprocessor,
-                   ExtractOutputPreprocessor(config=c)],
+    preprocessors=[
+        HomeworkPreprocessor,
+        SolnRemoverPreprocessor,
+        PyMarkdownPreprocessor,
+    ],
 )
 
 solution_nb_exp = NotebookExporter(
-    preprocessors=[HomeworkPreprocessor,
-                   PyMarkdownPreprocessor,
-                   ExtractOutputPreprocessor(config=c)],
+    preprocessors=[
+        HomeworkPreprocessor,
+        PyMarkdownPreprocessor,
+    ],
 )
 
 assignment_pdf_exp = PDFExporter(
-    preprocessors=[HomeworkPreprocessor,
-                   SolnRemoverPreprocessor,
-                   PyMarkdownPreprocessor,
-                   ExtractAttachmentsPreprocessor(config=c),
-                   ExtractOutputPreprocessor(config=c)],
+    preprocessors=[
+        HomeworkPreprocessor,
+        SolnRemoverPreprocessor,
+        PyMarkdownPreprocessor,
+        ExtractAttachmentsPreprocessor(config=c),
+    ],
     config=c,
 )
 assignment_pdf_exp.writer.build_directory = '.'
 
 solution_pdf_exp = PDFExporter(
-    preprocessors=[HomeworkPreprocessor,
-                   PyMarkdownPreprocessor,
-                   ExtractAttachmentsPreprocessor(config=c),
-                   ExtractOutputPreprocessor(config=c)],
+    preprocessors=[
+        HomeworkPreprocessor,
+        PyMarkdownPreprocessor,
+        ExtractAttachmentsPreprocessor(config=c),
+    ],
     config=c,
 )
 solution_pdf_exp.writer.build_directory = '.'

@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 ### Removed
+- Remove the `ExtractOutputsPreprocessor` which is not needed anymore
 
 ## [0.2.4] - 2018-AUG-03
 ### Fixed
