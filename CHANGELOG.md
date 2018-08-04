@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
+- The `HomeworkPreprocessor` and `SolnRemoverPreprocessor` are moved from `convert_thermo_hw` module to `preprocessors` module
 
 ### Fixed
 
