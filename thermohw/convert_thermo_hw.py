@@ -61,7 +61,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 c.PDFExporter.template_file = os.path.join(here, 'homework.tpl')
 
 
-def combine_pdf_as_bytes(pdfs: List[BytesIO]):
+def combine_pdf_as_bytes(pdfs: List[BytesIO]) -> bytes:
     """Combine PDFs and return a bytestring with the result.
 
     Arguments
@@ -162,6 +162,11 @@ def process(hw_num: int,
     assignment_pdfs: List[BytesIO] = []
     solution_pdfs: List[BytesIO] = []
 
+    assignment_pdf: bytes
+    solution_pdf: bytes
+    assignment_nb: str
+    solution_nb: str
+
     for problem in problems:
         print('Working on: ', problem)
         res: Dict[str, str] = {'unique_key': problem.stem}
@@ -199,7 +204,7 @@ def process(hw_num: int,
 
 def main(argv: Optional[Sequence[str]] = None) -> None:
     """Parse arguments and process the homework assignment."""
-    parser: ArgumentParser = ArgumentParser(
+    parser = ArgumentParser(
         description="Convert Jupyter Notebook assignments to PDFs",
     )
     parser.add_argument('--hw', type=int, required=True, help="Homework number to convert",

@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - The `HomeworkPreprocessor` and `SolnRemoverPreprocessor` are moved from `convert_thermo_hw` module to `preprocessors` module
 
 ### Fixed
+- Fix some typing errors
 
 ### Removed
 - Remove the `ExtractOutputsPreprocessor` which is not needed anymore
