@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [0.2.5] - 2018-AUG-03
 ### Added
 - `setup.cfg` file added to configure some metadata
 - Add `flake8` configuration to `setup.cfg`
@@ -72,7 +72,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Convert Jupyter Notebook to a set of Notebooks, with and without solutions
 - README with instructions for use
 
-[Unreleased]: https://github.com/bryanwweber/thermohw/compare/v0.2.4...HEAD
+[0.2.5]: https://github.com/bryanwweber/thermohw/compare/v0.2.4...v0.2.5
 [0.2.4]: https://github.com/bryanwweber/thermohw/compare/v0.2.3...v0.2.4
 [0.2.3]: https://github.com/bryanwweber/thermohw/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/bryanwweber/thermohw/compare/v0.2.1...v0.2.2
