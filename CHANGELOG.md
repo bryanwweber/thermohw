@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Expose filter functions from `div_filter.py` in `__init__.py`
 
 ### Changed
 

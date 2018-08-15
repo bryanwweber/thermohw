@@ -5,4 +5,5 @@ from .convert_thermo_hw import (assignment_nb_exp, solution_nb_exp,  # noqa: F40
 from .extract_attachments import ExtractAttachmentsPreprocessor  # noqa: F401
 from .pymarkdown import PyMarkdownPreprocessor  # noqa: F401
 from .preprocessors import HomeworkPreprocessor, SolnRemoverPreprocessor  # noqa: F401
+from .div_filter import ALLOWED_ALERT_TYPES, div_filter, convert_div  # noqa: F401
 from ._version import __version__  # noqa: F401
