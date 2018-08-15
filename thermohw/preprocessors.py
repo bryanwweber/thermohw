@@ -41,6 +41,8 @@ class HomeworkPreprocessor(Preprocessor):
 
     def preprocess(self, nb, resources):
         """Preprocess the entire notebook."""
+        # Use this loop to remove raw cells because the NotebookExporter
+        # doesn't have the exclude_raw configurable option
         keep_cells = []
         for cell in nb.cells:
             if cell.cell_type != 'raw':
