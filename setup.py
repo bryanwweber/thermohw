@@ -19,6 +19,7 @@ install_requires = [
     'nbconvert>=5.3,<6.0',
     'traitlets>=4.3,<5.0',
     'pdfrw>=0.4,<0.5',
+    'pandocfilters>=1.4,<2.0',
 ]
 
 # tests_require = [
