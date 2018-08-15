@@ -55,10 +55,12 @@ from pdfrw import PdfReader, PdfWriter  # type: ignore
 from .extract_attachments import ExtractAttachmentsPreprocessor
 from .pymarkdown import PyMarkdownPreprocessor
 from .preprocessors import HomeworkPreprocessor, SolnRemoverPreprocessor
+from .div_filter import convert_div
 
 c = Config()
 here = os.path.abspath(os.path.dirname(__file__))
 c.PDFExporter.template_file = os.path.join(here, 'homework.tpl')
+c.PDFExporter.filters = {'convert_div': convert_div}
 
 
 def combine_pdf_as_bytes(pdfs: List[BytesIO]) -> bytes:

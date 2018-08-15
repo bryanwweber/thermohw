@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Add filter to convert [Bootstrap `alert-*`](https://getbootstrap.com/docs/4.1/components/alerts/) classes to LaTeX `tcolorbox`es
 
 ### Changed
 
