@@ -123,6 +123,7 @@ solution_pdf_exp.writer.build_directory = '.'
 def process(hw_num: int,
             problems_to_do: Optional[Iterable[int]] = None,
             prefix: Optional[Path] = None,
+            by_hand: Optional[Iterable[int]] = None,
             ) -> None:
     """Process the homework problems in ``prefix`` folder.
 
@@ -134,6 +135,9 @@ def process(hw_num: int,
         A list of the problems to be processed
     prefix, optional
         A `~pathlib.Path` to this homework assignment folder
+    by_hand, optional
+        A list of the problems that should be labeled to be completed
+        by hand and have an image with the solution included.
 
     """
     if prefix is None:
@@ -172,6 +176,11 @@ def process(hw_num: int,
     for problem in problems:
         print('Working on: ', problem)
         res: Dict[str, str] = {'unique_key': problem.stem}
+        problem_number = int(problem.stem.split('-')[-1])
+        if by_hand is not None and problem_number in by_hand:
+            res['by_hand'] = True
+        else:
+            res['by_hand'] = False
         problem_fname = str(problem.resolve())
 
         assignment_pdf, _ = assignment_pdf_exp.from_filename(problem_fname, resources=res)
@@ -215,8 +224,13 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
                         help="Problem numbers to convert",
                         dest='problems',
                         nargs='*')
+    parser.add_argument('--by-hand', type=int,
+                        help="Problem numbers to be completed by hand",
+                        dest='by_hand',
+                        nargs='*')
     args = parser.parse_args(argv)
-    process(args.hw_num, args.problems, prefix=Path('homework/homework-{}'.format(args.hw_num)))
+    prefix = Path(f'homework/homework-{args.hw_num}')
+    process(args.hw_num, args.problems, prefix=prefix, by_hand=args.by_hand)
 
 
 if __name__ == '__main__':

@@ -16,10 +16,34 @@ SolnRemoverPreprocessor:
 """
 
 # Standard Library
-import copy
+from textwrap import dedent
 
 # Third-Party
 from nbconvert.preprocessors import Preprocessor  # type: ignore
+from nbformat.v4 import new_code_cell, new_markdown_cell  # type: ignore
+
+
+by_hand_source = ('**Attach an image of your solution for this problem in this cell. '
+                  'Attach multiple images if necessary. Please make sure the text is '
+                  'clear and legible.**')
+by_hand_cell = new_markdown_cell(source=by_hand_source)
+
+md_expl_source = ('**Write your engineering model, equations, and explanation of your process '
+                  'here.**')
+md_expl_cell = new_markdown_cell(source=md_expl_source)
+
+code_ans_source = ('# Write your code here to solve the problem\n'
+                   '# Make sure to write your final answer in the cell below.')
+code_ans_cell = new_code_cell(source=code_ans_source)
+
+md_ans_source = dedent("""\
+    <div class="alert alert-success">
+
+    **Answer:**
+
+    </div>
+""")
+md_ans_cell = new_markdown_cell(source=md_ans_source)
 
 
 class HomeworkPreprocessor(Preprocessor):
@@ -105,14 +129,14 @@ class SolnRemoverPreprocessor(Preprocessor):
             elif len(keep_cells_idx) > 0 and cell.source.startswith('### '):
                 keep_cells_idx.append(index)
 
-        code_cell = copy.deepcopy(nb.cells[1])
-        code_cell.execution_count = None
-        code_cell.source = ('# Write your code and explanation here to solve the problem\n'
-                            '# Make sure to print your final answer')
-
         keep_cells = nb.cells[:keep_cells_idx[0] + 1]
         for i in keep_cells_idx[1:]:
             keep_cells.append(nb.cells[i])
-            keep_cells.append(code_cell)
+            if resources['by_hand']:
+                keep_cells.append(by_hand_cell)
+            else:
+                keep_cells.append(md_expl_cell)
+                keep_cells.append(code_ans_cell)
+                keep_cells.append(md_ans_cell)
         nb.cells = keep_cells
         return nb, resources
