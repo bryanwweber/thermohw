@@ -82,10 +82,11 @@ class HomeworkPreprocessor(Preprocessor):
         if cell.cell_type != 'code':
             return cell, resources
 
+        cell.execution_count = None
+
         if 'Image' in cell.source:
             source = """# Delete this cell before exporting to PDF"""
             cell.source = source
-            cell.execution_count = None
             return cell, resources
 
         if index == 1:
@@ -99,7 +100,6 @@ class HomeworkPreprocessor(Preprocessor):
                     final_source.append(l)
 
             cell.source = '\n'.join(final_source)
-            cell.execution_count = None
             return cell, resources
 
         return cell, resources
