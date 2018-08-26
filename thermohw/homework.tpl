@@ -45,5 +45,5 @@
 % Render markdown but remove figure environment and convert
 % appropriate divs to boxes
 ((* block markdowncell scoped *))
-    ((( cell.source | citation2latex | strip_files_prefix | convert_pandoc('markdown-implicit_figures+tex_math_double_backslash', 'json') | convert_div('latex') | resolve_references | convert_pandoc('json', 'latex'))))
+    ((( cell.source | citation2latex | strip_files_prefix | convert_pandoc('markdown-implicit_figures+tex_math_double_backslash', 'json') | convert_div('latex') | convert_raw_html('latex') | resolve_references | convert_pandoc('json', 'latex'))))
 ((* endblock markdowncell *))
