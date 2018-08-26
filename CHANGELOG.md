@@ -6,8 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- `raw_html_filter` to process raw inline HTML to equivalent LaTeX forms
+- Option to show the solution should be done by hand, `--by-hand` command line option
 
 ### Changed
+- Reset all cell executions to be None when a Notebook is processed
 
 ### Fixed
 
