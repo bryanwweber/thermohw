@@ -4,17 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [0.4.0] - 2018-AUG-26
 ### Added
 - `raw_html_filter` to process raw inline HTML to equivalent LaTeX forms
 - Option to show the solution should be done by hand, `--by-hand` command line option
 
 ### Changed
 - Reset all cell executions to be None when a Notebook is processed
-
-### Fixed
-
-### Removed
 
 ## [0.3.1] - 2018-AUG-14
 ### Added
@@ -92,7 +88,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Convert Jupyter Notebook to a set of Notebooks, with and without solutions
 - README with instructions for use
 
-[Unreleased]: https://github.com/bryanwweber/thermohw/compare/v0.3.1...HEAD
+[0.4.0]: https://github.com/bryanwweber/thermohw/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/bryanwweber/thermohw/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/bryanwweber/thermohw/compare/v0.2.5...v0.3.0
 [0.2.5]: https://github.com/bryanwweber/thermohw/compare/v0.2.4...v0.2.5
