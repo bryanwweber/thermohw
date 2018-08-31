@@ -4,15 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
-### Added
-
-### Changed
-
+## [0.4.1] - 2018-AUG-30
 ### Fixed
 - Fix spaces in attached image names cause LaTeX to fail
-
-### Removed
 
 ## [0.4.0] - 2018-AUG-26
 ### Added
@@ -98,7 +92,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Convert Jupyter Notebook to a set of Notebooks, with and without solutions
 - README with instructions for use
 
-[Unreleased]: https://github.com/bryanwweber/thermohw/compare/v0.4.0...HEAD
+[0.4.1]: https://github.com/bryanwweber/thermohw/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/bryanwweber/thermohw/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/bryanwweber/thermohw/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/bryanwweber/thermohw/compare/v0.2.5...v0.3.0
