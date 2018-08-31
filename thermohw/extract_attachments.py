@@ -113,6 +113,8 @@ class ExtractAttachmentsPreprocessor(Preprocessor):
 
         # Loop through all of the attachments in the cell
         for name, attach in cell.get("attachments", {}).items():
+            orig_name = name
+            name = name.replace('%20', '-')
             for mime, data in attach.items():
                 if mime not in self.extract_output_types:
                     continue
@@ -145,7 +147,7 @@ class ExtractAttachmentsPreprocessor(Preprocessor):
 
                 # now we need to change the cell source so that it links to the
                 # filename instead of `attachment:`
-                attach_str = "attachment:"+name
+                attach_str = "attachment:" + orig_name
                 if attach_str in cell.source:
                     cell.source = cell.source.replace(attach_str, filename)
 

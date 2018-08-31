@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 ### Fixed
+- Fix spaces in attached image names cause LaTeX to fail
 
 ### Removed
 
