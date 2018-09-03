@@ -1,2 +1,3 @@
 include thermohw/homework.tpl
 include LICENSE
+include thermohw/test/*.ipynb
