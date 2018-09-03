@@ -70,6 +70,7 @@ to indicate the copyright and license terms:
 from binascii import a2b_base64
 import sys
 import os
+import re
 
 from traitlets import Unicode, Set  # type: ignore
 from nbconvert.preprocessors.base import Preprocessor  # type: ignore
@@ -114,7 +115,7 @@ class ExtractAttachmentsPreprocessor(Preprocessor):
         # Loop through all of the attachments in the cell
         for name, attach in cell.get("attachments", {}).items():
             orig_name = name
-            name = name.replace('%20', '-')
+            name = re.sub(r'%[\w\d][\w\d]', '-', name)
             for mime, data in attach.items():
                 if mime not in self.extract_output_types:
                     continue
