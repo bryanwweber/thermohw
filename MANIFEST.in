@@ -1,1 +1,2 @@
 include thermohw/homework.tpl
+include LICENSE
