@@ -6,10 +6,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Test suite started, with a test of the `ExtractOutputsPreprocessor` that checks pathological filenames
+- Run test suite on TravisCI
 
 ### Changed
+- Distribute the LICENSE file with built artifacts
 
 ### Fixed
+- Fix pathological image filenames that caused URL escaping errors
 
 ### Removed
 
