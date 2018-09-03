@@ -1,8 +1,16 @@
 sudo: false
 language: generic
 
-# Only build on tags
-if: tag IS present
+addons:
+  apt:
+    packages:
+    - texlive-xetex
+    - latex-xcolor
+    - texlive-fonts-recommended
+    - texlive-latex-recommended
+    - texlive-latex-extra
+    - texlive-generic-recommended
+    - pgf
 
 env:
   global:
@@ -17,14 +25,22 @@ install:
   - conda update -q conda
   - conda update -q --all
   - conda config --append channels conda-forge
-  - conda install conda-build anaconda-client conda-verify
+  - if [[ -z "$TRAVIS_TAG" ]]; then
+      conda install -q nbconvert traitlets pdfrw pandocfilters pytest;
+    else
+      conda install -q conda-build anaconda-client conda-verify;
+    fi
   - conda info -a
   - conda list
 
 script:
   - set -e
-  - conda build conda.recipe
-  - anaconda -t $ANACONDA_TOKEN upload $HOME/miniconda/conda-bld/*/thermohw*.tar.bz2
+  - if [[ -z "$TRAVIS_TAG" ]]; then
+      pytest -vv .;
+    else
+      conda build conda.recipe;
+      anaconda -t $ANACONDA_TOKEN upload $HOME/miniconda/conda-bld/*/thermohw*.tar.bz2;
+    fi
 
 deploy:
   provider: pypi
