@@ -45,6 +45,9 @@ md_ans_source = dedent("""\
 """)
 md_ans_cell = new_markdown_cell(source=md_ans_source)
 
+sketch_source = '**Attach an image of your sketch for this problem in this cell.**'
+sketch_cell = new_markdown_cell(source=sketch_source)
+
 
 class HomeworkPreprocessor(Preprocessor):
     """Preprocess a homework problem to turn it into an assignment.
@@ -137,8 +140,11 @@ class SolnRemoverPreprocessor(Preprocessor):
             if resources['by_hand']:
                 keep_cells.append(by_hand_cell)
             else:
-                keep_cells.append(md_expl_cell)
-                keep_cells.append(code_ans_cell)
-                keep_cells.append(md_ans_cell)
+                if 'sketch' in nb.cells[i].source.lower():
+                    keep_cells.append(sketch_cell)
+                else:
+                    keep_cells.append(md_expl_cell)
+                    keep_cells.append(code_ans_cell)
+                    keep_cells.append(md_ans_cell)
         nb.cells = keep_cells
         return nb, resources
