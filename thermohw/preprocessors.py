@@ -94,6 +94,8 @@ class HomeworkPreprocessor(Preprocessor):
             for l in cell.source.split('\n'):
                 if '%matplotlib inline' in l or 'import matplotlib' in l:
                     final_source.append(l)
+                elif 'units.define' in l:
+                    final_source.append(l)
                 elif 'from' not in l:
                     continue
                 else:
