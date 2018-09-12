@@ -28,7 +28,7 @@ by_hand_source = ('**Attach an image of your solution for this problem in this c
                   'clear and legible.**')
 by_hand_cell = new_markdown_cell(source=by_hand_source)
 
-md_expl_source = ('**Write your engineering model, equations, and explanation of your process '
+md_expl_source = ('**Write your engineering model, equations, and/or explanation of your process '
                   'here.**')
 md_expl_cell = new_markdown_cell(source=md_expl_source)
 
