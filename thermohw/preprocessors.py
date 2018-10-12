@@ -51,6 +51,51 @@ md_ans_cell = new_markdown_cell(source=md_ans_source)
 sketch_source = '**Attach an image of your sketch for this problem in this cell.**'
 sketch_cell = new_markdown_cell(source=sketch_source)
 
+exam_instructions_source = """\
+---
+
+## Instructions
+
+You have 1.25 hours to complete the exam. When you are finished with the exam, you should download
+a PDF of all of your Notebooks and upload it to Gradescope. You **_MUST_** upload the exam to
+Gradescope before the end of your course period or **_IT WILL NOT BE ACCEPTED_**. Absolutely no
+late exams will be accepted, no excuses, no BS. If you have any problems, contact me as soon as you
+run into trouble.
+
+Complete all of the questions below. Short answer questions should be answered in the indicated
+Markdown cell immediately below the question statement, and can generally be answered in 1-3
+sentences. The answers to problem solving questions should be placed in the indicated Markdown
+cells, which should be immediately below your work on that problem.
+
+You may use your computer, calculator, textbook, homework problem solutions, JupyterHub/ThermoState,
+or any websites to solve the problems. However, you may not copy the question text (or portions of
+the text) into a search engine, and **you must work by yourself** to solve these problems.
+Furthermore, my standard policy on academic integrity from the course syllabus applies (in addition
+to the statement below)—All of the work that you hand in must be entirely your own; as one example,
+you may not use answers to these questions that you find on the web directly, your answers must
+represent your own work and your own understanding.
+
+---
+
+## Honesty and Academic Inegrity Statement
+
+**Read the following statement and type your name in the cell below to indicate your acceptance
+of and agreement with these policies**
+
+I agree that I will not discuss, disclose, copy, reproduce, adapt, or transmit exam content orally,
+in writing, on the Internet, or through any other medium prior to the distribution of the exam
+solutions by the Instructor. I agree that I will (and have) worked entirely on my own for this exam
+and the work below represents entirely my individual work and understanding. I understand that my
+failure to follow the above guidelines will result in the consequences outlined in the syllabus
+under the academic honesty and integrity policy, possibly including, but not limited to, a failing
+grade on this exam.
+
+---
+
+## Type your name in the cell below
+"""
+exam_instructions_cell = new_markdown_cell(source=exam_instructions_source)
+
 
 class HomeworkPreprocessor(Preprocessor):  # type: ignore
     """Preprocess a homework problem to turn it into an assignment.
@@ -151,4 +196,35 @@ class SolnRemoverPreprocessor(Preprocessor):  # type: ignore
                     keep_cells.append(code_ans_cell)
                     keep_cells.append(md_ans_cell)
         nb.cells = keep_cells
+        return nb, resources
+
+
+class ExamAssignmentPreprocessor(Preprocessor):  # type: ignore
+    """Preprocess an exam Notebook into the assignment."""
+
+    def preprocess(self, nb: 'NotebookNode', resources: dict) -> Tuple['NotebookNode', dict]:
+        """Preprocess the entire Notebook."""
+        keep_cells_idx: List[int] = []
+        for index, cell in enumerate(nb.cells):
+            if '### solution' in cell.source.lower():
+                cell.source = '### Solution'
+                if not keep_cells_idx:
+                    keep_cells_idx.append(index)
+            elif '#### ' in cell.source.lower():
+                keep_cells_idx.append(index)
+
+        # This will be true for the problem solving Notebooks
+        if not len(keep_cells_idx) == 1:
+            keep_cells = nb.cells[:keep_cells_idx[0] + 1]
+            for i in keep_cells_idx[1:]:
+                keep_cells.append(md_expl_cell)
+                keep_cells.append(code_ans_cell)
+                keep_cells.append(md_ans_cell)
+            # This is deliberately inside the if statement so that it only runs
+            # for problem solving Notebooks, not for the short answer
+            nb.cells = keep_cells
+
+        nb.cells.insert(1, exam_instructions_cell)
+        nb.cells.insert(2, new_markdown_cell(source=''))
+
         return nb, resources

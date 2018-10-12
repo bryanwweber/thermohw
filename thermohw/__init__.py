@@ -8,3 +8,4 @@ from .preprocessors import HomeworkPreprocessor, SolnRemoverPreprocessor  # noqa
 from .filters import ALLOWED_ALERT_TYPES, div_filter, convert_div  # noqa: F401
 from .filters import raw_html_filter, convert_raw_html  # noqa: F401
 from ._version import __version__  # noqa: F401
+from .convert_thermo_exam import assignment_nb_exp as exam_nb_exp, solution_pdf_exp as exam_pdf_exp  # noqa: F401, E501
