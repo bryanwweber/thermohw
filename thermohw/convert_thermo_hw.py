@@ -62,6 +62,7 @@ c = Config()
 here = os.path.abspath(os.path.dirname(__file__))
 c.PDFExporter.template_file = os.path.join(here, 'homework.tpl')
 c.PDFExporter.filters = {'convert_div': convert_div, 'convert_raw_html': convert_raw_html}
+c.PDFExporter.latex_count = 1
 
 
 assignment_nb_exp = NotebookExporter(
