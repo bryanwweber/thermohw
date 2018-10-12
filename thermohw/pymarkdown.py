@@ -45,12 +45,16 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
+from typing import TYPE_CHECKING, Tuple
 import re
 
-from nbconvert.preprocessors import Preprocessor  # type: ignore
+from nbconvert.preprocessors import Preprocessor
+
+if TYPE_CHECKING:
+    from nbformat import NotebookNode  # noqa: F401 # typing only import
 
 
-class PyMarkdownPreprocessor(Preprocessor):
+class PyMarkdownPreprocessor(Preprocessor):  # type: ignore
     """
     :mod:`nbconvert` Preprocessor for the python-markdown nbextension.
 
@@ -58,7 +62,7 @@ class PyMarkdownPreprocessor(Preprocessor):
     markdown cells with the results stored in the cell metadata.
     """
 
-    def replace_variables(self, source, variables):
+    def replace_variables(self, source: str, variables: dict) -> str:
         """Replace {{variablename}} with stored value."""
         try:
             replaced = re.sub(
@@ -67,7 +71,8 @@ class PyMarkdownPreprocessor(Preprocessor):
             replaced = source
         return replaced
 
-    def preprocess_cell(self, cell, resources, index):
+    def preprocess_cell(self, cell: 'NotebookNode',
+                        resources: dict, index: int) -> Tuple['NotebookNode', dict]:
         """Preprocess cell.
 
         Parameters

@@ -37,7 +37,7 @@ main(argv=None): Process the command line arguments and run the
 
 """
 # Standard library
-from typing import Iterable, Dict, Sequence, Optional, List, Any
+from typing import Iterable, Dict, Sequence, Optional, List, Any, Union
 import os
 from pathlib import Path
 from argparse import ArgumentParser
@@ -46,10 +46,9 @@ from io import BytesIO
 from datetime import date
 
 # Third Party
-from nbconvert import NotebookExporter, PDFExporter  # type: ignore
-from traitlets.config import Config  # type: ignore
-from nbconvert.writers import FilesWriter  # type: ignore
-from pdfrw import PdfReader, PdfWriter  # type: ignore
+from nbconvert import NotebookExporter, PDFExporter
+from traitlets.config import Config
+from nbconvert.writers import FilesWriter
 
 # Local imports
 from .extract_attachments import ExtractAttachmentsPreprocessor
@@ -157,7 +156,7 @@ def process(hw_num: int,
 
     for problem in problems:
         print('Working on: ', problem)
-        res: Dict[str, str] = {'unique_key': problem.stem}
+        res: Dict[str, Union[str, bool]] = {'unique_key': problem.stem}
         problem_number = int(problem.stem.split('-')[-1])
         if by_hand is not None and problem_number in by_hand:
             res['by_hand'] = True
@@ -173,12 +172,12 @@ def process(hw_num: int,
 
         assignment_nb, _ = assignment_nb_exp.from_filename(problem_fname, resources=res)
 
-        with ZipFile(assignment_zip_name, mode='a') as zip_file:  # type: ignore
+        with ZipFile(assignment_zip_name, mode='a') as zip_file:
             zip_file.writestr(problem.name, assignment_nb)
 
         solution_nb, _ = solution_nb_exp.from_filename(problem_fname, resources=res)
 
-        with ZipFile(solution_zip_name, mode='a') as zip_file:  # type: ignore
+        with ZipFile(solution_zip_name, mode='a') as zip_file:
             zip_file.writestr(problem.stem + '-soln' + problem.suffix, solution_nb)
 
     resources: Dict[str, Any] = {

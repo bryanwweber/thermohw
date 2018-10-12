@@ -16,10 +16,14 @@ SolnRemoverPreprocessor:
 """
 
 # Standard Library
+from typing import TYPE_CHECKING, Tuple, List
 
 # Third-Party
-from nbconvert.preprocessors import Preprocessor  # type: ignore
-from nbformat.v4 import new_code_cell, new_markdown_cell  # type: ignore
+from nbconvert.preprocessors import Preprocessor
+from nbformat.v4 import new_code_cell, new_markdown_cell
+
+if TYPE_CHECKING:
+    from nbformat import NotebookNode  # noqa: F401 # typing only
 
 
 by_hand_source = ('**Attach an image of your solution for this problem in this cell. '
@@ -48,7 +52,7 @@ sketch_source = '**Attach an image of your sketch for this problem in this cell.
 sketch_cell = new_markdown_cell(source=sketch_source)
 
 
-class HomeworkPreprocessor(Preprocessor):
+class HomeworkPreprocessor(Preprocessor):  # type: ignore
     """Preprocess a homework problem to turn it into an assignment.
 
     This preprocessor produces output suitable for distribution to
@@ -65,7 +69,7 @@ class HomeworkPreprocessor(Preprocessor):
        import related bits.
     """
 
-    def preprocess(self, nb, resources):
+    def preprocess(self, nb: 'NotebookNode', resources: dict) -> Tuple['NotebookNode', dict]:
         """Preprocess the entire notebook."""
         # Use this loop to remove raw cells because the NotebookExporter
         # doesn't have the exclude_raw configurable option
@@ -79,7 +83,8 @@ class HomeworkPreprocessor(Preprocessor):
             nb.cells[index], resources = self.preprocess_cell(cell, resources, index)
         return nb, resources
 
-    def preprocess_cell(self, cell, resources, index):
+    def preprocess_cell(self, cell: 'NotebookNode',
+                        resources: dict, index: int) -> Tuple['NotebookNode', dict]:
         """Preprocess each cell of the notebook."""
         if cell.cell_type != 'code':
             return cell, resources
@@ -109,7 +114,7 @@ class HomeworkPreprocessor(Preprocessor):
         return cell, resources
 
 
-class SolnRemoverPreprocessor(Preprocessor):
+class SolnRemoverPreprocessor(Preprocessor):  # type: ignore
     """Preprocess a homework problem to remove the solution.
 
     This preprocessor produces output suitable for distribution to
@@ -123,7 +128,7 @@ class SolnRemoverPreprocessor(Preprocessor):
     their code and explanation there.
     """
 
-    def preprocess(self, nb, resources):
+    def preprocess(self, nb: 'NotebookNode', resources: dict) -> Tuple['NotebookNode', dict]:
         """Preprocess the entire notebook."""
         keep_cells_idx = []
         for index, cell in enumerate(nb.cells):

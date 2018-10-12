@@ -71,12 +71,16 @@ from binascii import a2b_base64
 import sys
 import os
 import re
+from typing import Tuple, TYPE_CHECKING
 
-from traitlets import Unicode, Set  # type: ignore
-from nbconvert.preprocessors.base import Preprocessor  # type: ignore
+from traitlets import Unicode, Set
+from nbconvert.preprocessors.base import Preprocessor
+
+if TYPE_CHECKING:
+    from nbformat import NotebookNode  # noqa: F401 # only imported for type checking
 
 
-class ExtractAttachmentsPreprocessor(Preprocessor):
+class ExtractAttachmentsPreprocessor(Preprocessor):  # type: ignore # no types available
     """
     Extracts all of the outputs from the notebook file.
 
@@ -91,7 +95,8 @@ class ExtractAttachmentsPreprocessor(Preprocessor):
         {'image/png', 'image/jpeg', 'image/svg+xml', 'application/pdf'}
     ).tag(config=True)
 
-    def preprocess_cell(self, cell, resources, cell_index):
+    def preprocess_cell(self, cell: 'NotebookNode',
+                        resources: dict, cell_index: int) -> Tuple['NotebookNode', dict]:
         """Apply a transformation on each cell.
 
         Parameters
