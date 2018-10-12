@@ -16,7 +16,6 @@ SolnRemoverPreprocessor:
 """
 
 # Standard Library
-from textwrap import dedent
 
 # Third-Party
 from nbconvert.preprocessors import Preprocessor  # type: ignore
@@ -36,13 +35,13 @@ code_ans_source = ('# Write your code here to solve the problem\n'
                    '# Make sure to write your final answer in the cell below.')
 code_ans_cell = new_code_cell(source=code_ans_source)
 
-md_ans_source = dedent("""\
-    <div class="alert alert-success">
+md_ans_source = """\
+<div class="alert alert-success">
 
-    **Answer:**
+**Answer:**
 
-    </div>
-""")
+</div>
+"""
 md_ans_cell = new_markdown_cell(source=md_ans_source)
 
 sketch_source = '**Attach an image of your sketch for this problem in this cell.**'
