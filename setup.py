@@ -1,11 +1,13 @@
 from setuptools import setup, find_packages
 from codecs import open
 from os import path
+from typing import Dict
 
 here = path.abspath(path.dirname(__file__))
 
+version: Dict[str, str] = {}
 with open(path.join(here, 'thermohw', '_version.py')) as version_file:
-    exec(version_file.read())
+    exec(version_file.read(), version)
 
 with open(path.join(here, 'README.md')) as readme_file:
     readme = readme_file.read()
@@ -29,7 +31,7 @@ install_requires = [
 
 setup(
     name='thermohw',
-    version=__version__,  # noqa: F821
+    version=version['__version__'],  # noqa: F821
     description='Package for converting thermo homework assignments',
     long_description_content_type='text/markdown',
     long_description=long_description,
