@@ -154,9 +154,11 @@ def process(hw_num: int,
     assignment_nb: str
     solution_nb: str
 
+    res: Dict[str, Union[str, bool]] = {'delete_pymarkdown': True}
+
     for problem in problems:
         print('Working on: ', problem)
-        res: Dict[str, Union[str, bool]] = {'unique_key': problem.stem}
+        res['unique_key'] = problem.stem
         problem_number = int(problem.stem.split('-')[-1])
         if by_hand is not None and problem_number in by_hand:
             res['by_hand'] = True

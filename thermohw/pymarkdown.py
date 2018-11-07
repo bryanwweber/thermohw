@@ -86,9 +86,10 @@ class PyMarkdownPreprocessor(Preprocessor):  # type: ignore
 
         """
         if cell.cell_type == "markdown":
-            if hasattr(cell['metadata'], 'variables'):
-                variables = cell['metadata']['variables']
-                if len(variables) > 0:
-                    cell.source = self.replace_variables(
-                        cell.source, variables)
+            variables = cell['metadata'].get('variables', {})
+            if len(variables) > 0:
+                cell.source = self.replace_variables(
+                    cell.source, variables)
+                if resources.get('delete_pymarkdown', False):
+                    del cell.metadata['variables']
         return cell, resources
