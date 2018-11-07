@@ -21,7 +21,7 @@ between sections of the solution.
 
 Input files should be named according to the convention::
 
-    homwork-A-B.ipynb
+    homework-A-B.ipynb
 
 where ``A`` is the homework number and ``B`` is the problem number of
 this input file in the homework assignment.

@@ -11,7 +11,7 @@ from pdfrw import PdfReader, PdfWriter
 
 
 def combine_pdf_as_bytes(pdfs: List[BytesIO]) -> bytes:
-    """Combine PDFs and return a bytestring with the result.
+    """Combine PDFs and return a byte-string with the result.
 
     Arguments
     ---------

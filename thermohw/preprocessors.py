@@ -16,7 +16,7 @@ SolnRemoverPreprocessor:
 """
 
 # Standard Library
-from typing import TYPE_CHECKING, Tuple, List
+from typing import TYPE_CHECKING, Tuple
 
 # Third-Party
 from nbconvert.preprocessors import Preprocessor
@@ -77,7 +77,7 @@ represent your own work and your own understanding.
 
 ---
 
-## Honesty and Academic Inegrity Statement
+## Honesty and Academic Integrity Statement
 
 **Read the following statement and type your name in the cell below to indicate your acceptance
 of and agreement with these policies**

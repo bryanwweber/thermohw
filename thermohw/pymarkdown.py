@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Nbconvert preprocessor for the python-markdown nbextension.
 
 This module is copied from the ipython-contrib/jupyter_contrib_nbextensions
@@ -63,7 +62,7 @@ class PyMarkdownPreprocessor(Preprocessor):  # type: ignore
     """
 
     def replace_variables(self, source: str, variables: dict) -> str:
-        """Replace {{variablename}} with stored value."""
+        """Replace {{variable-name}} with stored value."""
         try:
             replaced = re.sub(
                 "{{(.*?)}}", lambda m: variables.get(m.group(1), ''), source)
@@ -80,7 +79,7 @@ class PyMarkdownPreprocessor(Preprocessor):  # type: ignore
         cell : NotebookNode cell
             Notebook cell being processed
         resources : dictionary
-            Additional resources used in the conversion process.  Allows
+            Additional resources used in the conversion process. Allows
             preprocessors to pass variables into the Jinja engine.
         cell_index : int
             Index of the cell being processed (see base.py)
