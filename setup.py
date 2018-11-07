@@ -57,6 +57,7 @@ setup(
     entry_points={
         'console_scripts': [
             'convert_thermo_hw=thermohw.convert_thermo_hw:main',
+            'convert_thermo_exam=thermohw.convert_thermo_exam:main',
         ],
     },
     include_package_data=True,
