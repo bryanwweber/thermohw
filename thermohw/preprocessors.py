@@ -199,32 +199,33 @@ class SolnRemoverPreprocessor(Preprocessor):  # type: ignore
         return nb, resources
 
 
-class ExamAssignmentPreprocessor(Preprocessor):  # type: ignore
-    """Preprocess an exam Notebook into the assignment."""
+class ExamSAPreprocessor(Preprocessor):  # type: ignore
+    """Preprocess a short-answer exam Notebook into the assignment."""
 
     def preprocess(self, nb: 'NotebookNode', resources: dict) -> Tuple['NotebookNode', dict]:
         """Preprocess the entire Notebook."""
-        keep_cells_idx: List[int] = []
         for index, cell in enumerate(nb.cells):
-            if '### solution' in cell.source.lower():
-                cell.source = '### Solution'
-                if not keep_cells_idx:
-                    keep_cells_idx.append(index)
-            elif '#### ' in cell.source.lower():
-                keep_cells_idx.append(index)
+            if '## Solution' in cell.source:
+                nb.cells[index + 1].source = ''
 
-        # This will be true for the problem solving Notebooks
-        if not len(keep_cells_idx) == 1:
-            keep_cells = nb.cells[:keep_cells_idx[0] + 1]
-            for i in keep_cells_idx[1:]:
-                keep_cells.append(md_expl_cell)
-                keep_cells.append(code_ans_cell)
-                keep_cells.append(md_ans_cell)
-            # This is deliberately inside the if statement so that it only runs
-            # for problem solving Notebooks, not for the short answer
-            nb.cells = keep_cells
+        return nb, resources
 
-        nb.cells.insert(1, exam_instructions_cell)
-        nb.cells.insert(2, new_markdown_cell(source=''))
+
+class ExamInstructionsPreprocessor(Preprocessor):  # type: ignore
+    """Preprocess an exam Notebook to add the instructions."""
+
+    def preprocess(self, nb: 'NotebookNode', resources: dict) -> Tuple['NotebookNode', dict]:
+        """Preprocess the entire Notebook."""
+
+        exam_num = resources['exam_num']
+        time = resources['time']
+        date = resources['date']
+
+        nb.cells.insert(0, new_markdown_cell(source='---'))
+        nb.cells.insert(0, new_markdown_cell(source=''))
+        nb.cells.insert(0, exam_instructions_cell)
+        first_cell_source = ('# ME 2233: Thermodynamic Principles\n\n'
+                             f'# Exam {exam_num} - {time}\n\n# {date}')
+        nb.cells.insert(0, new_markdown_cell(source=first_cell_source))
 
         return nb, resources
