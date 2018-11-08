@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Nbconvert preprocessor for the python-markdown nbextension.
 
 This module is copied from the ipython-contrib/jupyter_contrib_nbextensions
@@ -45,12 +44,16 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
+from typing import TYPE_CHECKING, Tuple
 import re
 
-from nbconvert.preprocessors import Preprocessor  # type: ignore
+from nbconvert.preprocessors import Preprocessor
+
+if TYPE_CHECKING:
+    from nbformat import NotebookNode  # noqa: F401 # typing only import
 
 
-class PyMarkdownPreprocessor(Preprocessor):
+class PyMarkdownPreprocessor(Preprocessor):  # type: ignore
     """
     :mod:`nbconvert` Preprocessor for the python-markdown nbextension.
 
@@ -58,8 +61,8 @@ class PyMarkdownPreprocessor(Preprocessor):
     markdown cells with the results stored in the cell metadata.
     """
 
-    def replace_variables(self, source, variables):
-        """Replace {{variablename}} with stored value."""
+    def replace_variables(self, source: str, variables: dict) -> str:
+        """Replace {{variable-name}} with stored value."""
         try:
             replaced = re.sub(
                 "{{(.*?)}}", lambda m: variables.get(m.group(1), ''), source)
@@ -67,7 +70,8 @@ class PyMarkdownPreprocessor(Preprocessor):
             replaced = source
         return replaced
 
-    def preprocess_cell(self, cell, resources, index):
+    def preprocess_cell(self, cell: 'NotebookNode',
+                        resources: dict, index: int) -> Tuple['NotebookNode', dict]:
         """Preprocess cell.
 
         Parameters
@@ -75,16 +79,17 @@ class PyMarkdownPreprocessor(Preprocessor):
         cell : NotebookNode cell
             Notebook cell being processed
         resources : dictionary
-            Additional resources used in the conversion process.  Allows
+            Additional resources used in the conversion process. Allows
             preprocessors to pass variables into the Jinja engine.
         cell_index : int
             Index of the cell being processed (see base.py)
 
         """
         if cell.cell_type == "markdown":
-            if hasattr(cell['metadata'], 'variables'):
-                variables = cell['metadata']['variables']
-                if len(variables) > 0:
-                    cell.source = self.replace_variables(
-                        cell.source, variables)
+            variables = cell['metadata'].get('variables', {})
+            if len(variables) > 0:
+                cell.source = self.replace_variables(
+                    cell.source, variables)
+                if resources.get('delete_pymarkdown', False):
+                    del cell.metadata['variables']
         return cell, resources

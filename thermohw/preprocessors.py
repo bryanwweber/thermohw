@@ -16,11 +16,14 @@ SolnRemoverPreprocessor:
 """
 
 # Standard Library
-from textwrap import dedent
+from typing import TYPE_CHECKING, Tuple
 
 # Third-Party
-from nbconvert.preprocessors import Preprocessor  # type: ignore
-from nbformat.v4 import new_code_cell, new_markdown_cell  # type: ignore
+from nbconvert.preprocessors import Preprocessor
+from nbformat.v4 import new_code_cell, new_markdown_cell
+
+if TYPE_CHECKING:
+    from nbformat import NotebookNode  # noqa: F401 # typing only
 
 
 by_hand_source = ('**Attach an image of your solution for this problem in this cell. '
@@ -36,20 +39,65 @@ code_ans_source = ('# Write your code here to solve the problem\n'
                    '# Make sure to write your final answer in the cell below.')
 code_ans_cell = new_code_cell(source=code_ans_source)
 
-md_ans_source = dedent("""\
-    <div class="alert alert-success">
+md_ans_source = """\
+<div class="alert alert-success">
 
-    **Answer:**
+**Answer:**
 
-    </div>
-""")
+</div>
+"""
 md_ans_cell = new_markdown_cell(source=md_ans_source)
 
 sketch_source = '**Attach an image of your sketch for this problem in this cell.**'
 sketch_cell = new_markdown_cell(source=sketch_source)
 
+exam_instructions_source = """\
+---
 
-class HomeworkPreprocessor(Preprocessor):
+## Instructions
+
+You have 1.25 hours to complete the exam. When you are finished with the exam, you should download
+a PDF of all of your Notebooks and upload it to Gradescope. You **_MUST_** upload the exam to
+Gradescope before the end of your course period or **_IT WILL NOT BE ACCEPTED_**. Absolutely no
+late exams will be accepted, no excuses, no BS. If you have any problems, contact me as soon as you
+run into trouble.
+
+Complete all of the questions below. Short answer questions should be answered in the indicated
+Markdown cell immediately below the question statement, and can generally be answered in 1-3
+sentences. The answers to problem solving questions should be placed in the indicated Markdown
+cells, which should be immediately below your work on that problem.
+
+You may use your computer, calculator, textbook, homework problem solutions, JupyterHub/ThermoState,
+or any websites to solve the problems. However, you may not copy the question text (or portions of
+the text) into a search engine, and **you must work by yourself** to solve these problems.
+Furthermore, my standard policy on academic integrity from the course syllabus applies (in addition
+to the statement below)—All of the work that you hand in must be entirely your own; as one example,
+you may not use answers to these questions that you find on the web directly, your answers must
+represent your own work and your own understanding.
+
+---
+
+## Honesty and Academic Integrity Statement
+
+**Read the following statement and type your name in the cell below to indicate your acceptance
+of and agreement with these policies**
+
+I agree that I will not discuss, disclose, copy, reproduce, adapt, or transmit exam content orally,
+in writing, on the Internet, or through any other medium prior to the distribution of the exam
+solutions by the Instructor. I agree that I will (and have) worked entirely on my own for this exam
+and the work below represents entirely my individual work and understanding. I understand that my
+failure to follow the above guidelines will result in the consequences outlined in the syllabus
+under the academic honesty and integrity policy, possibly including, but not limited to, a failing
+grade on this exam.
+
+---
+
+## Type your name in the cell below
+"""
+exam_instructions_cell = new_markdown_cell(source=exam_instructions_source)
+
+
+class HomeworkPreprocessor(Preprocessor):  # type: ignore
     """Preprocess a homework problem to turn it into an assignment.
 
     This preprocessor produces output suitable for distribution to
@@ -66,7 +114,7 @@ class HomeworkPreprocessor(Preprocessor):
        import related bits.
     """
 
-    def preprocess(self, nb, resources):
+    def preprocess(self, nb: 'NotebookNode', resources: dict) -> Tuple['NotebookNode', dict]:
         """Preprocess the entire notebook."""
         # Use this loop to remove raw cells because the NotebookExporter
         # doesn't have the exclude_raw configurable option
@@ -80,7 +128,8 @@ class HomeworkPreprocessor(Preprocessor):
             nb.cells[index], resources = self.preprocess_cell(cell, resources, index)
         return nb, resources
 
-    def preprocess_cell(self, cell, resources, index):
+    def preprocess_cell(self, cell: 'NotebookNode',
+                        resources: dict, index: int) -> Tuple['NotebookNode', dict]:
         """Preprocess each cell of the notebook."""
         if cell.cell_type != 'code':
             return cell, resources
@@ -110,7 +159,7 @@ class HomeworkPreprocessor(Preprocessor):
         return cell, resources
 
 
-class SolnRemoverPreprocessor(Preprocessor):
+class SolnRemoverPreprocessor(Preprocessor):  # type: ignore
     """Preprocess a homework problem to remove the solution.
 
     This preprocessor produces output suitable for distribution to
@@ -124,7 +173,7 @@ class SolnRemoverPreprocessor(Preprocessor):
     their code and explanation there.
     """
 
-    def preprocess(self, nb, resources):
+    def preprocess(self, nb: 'NotebookNode', resources: dict) -> Tuple['NotebookNode', dict]:
         """Preprocess the entire notebook."""
         keep_cells_idx = []
         for index, cell in enumerate(nb.cells):
@@ -147,4 +196,36 @@ class SolnRemoverPreprocessor(Preprocessor):
                     keep_cells.append(code_ans_cell)
                     keep_cells.append(md_ans_cell)
         nb.cells = keep_cells
+        return nb, resources
+
+
+class ExamSAPreprocessor(Preprocessor):  # type: ignore
+    """Preprocess a short-answer exam Notebook into the assignment."""
+
+    def preprocess(self, nb: 'NotebookNode', resources: dict) -> Tuple['NotebookNode', dict]:
+        """Preprocess the entire Notebook."""
+        for index, cell in enumerate(nb.cells):
+            if '## Solution' in cell.source:
+                nb.cells[index + 1].source = ''
+
+        return nb, resources
+
+
+class ExamInstructionsPreprocessor(Preprocessor):  # type: ignore
+    """Preprocess an exam Notebook to add the instructions."""
+
+    def preprocess(self, nb: 'NotebookNode', resources: dict) -> Tuple['NotebookNode', dict]:
+        """Preprocess the entire Notebook."""
+
+        exam_num = resources['exam_num']
+        time = resources['time']
+        date = resources['date']
+
+        nb.cells.insert(0, new_markdown_cell(source='---'))
+        nb.cells.insert(0, new_markdown_cell(source=''))
+        nb.cells.insert(0, exam_instructions_cell)
+        first_cell_source = ('# ME 2233: Thermodynamic Principles\n\n'
+                             f'# Exam {exam_num} - {time}\n\n# {date}')
+        nb.cells.insert(0, new_markdown_cell(source=first_cell_source))
+
         return nb, resources

@@ -5,6 +5,8 @@ elements (which are the Pandoc AST representation of ``div`` elements)
 and convert them to a LaTeX environment with the appropriate name.
 """
 
+from typing import Any, Optional
+
 from pandocfilters import applyJSONFilters, RawBlock, RawInline
 
 # Allowed alert types are all from the Bootstrap alert types
@@ -19,7 +21,7 @@ ALLOWED_ALERT_TYPES = [
 ]
 
 
-def div_filter(key, value, format, meta):
+def div_filter(key: str, value: list, format: str, meta: Any) -> Optional[list]:
     """Filter the JSON ``value`` for alert divs.
 
     Arguments
@@ -51,12 +53,12 @@ def div_filter(key, value, format, meta):
     return filtered
 
 
-def convert_div(text, format=None):
+def convert_div(text: str, format: Optional[str] = None) -> 'applyJSONFilters':
     """Apply the `dev_filter` action to the text."""
     return applyJSONFilters([div_filter], text, format=format)
 
 
-def raw_html_filter(key, value, format, meta):
+def raw_html_filter(key: str, value: list, format: str, meta: Any) -> Optional[list]:
     """Filter the JSON ``value`` for raw html to convert to LaTeX.
 
     Arguments
@@ -86,6 +88,6 @@ def raw_html_filter(key, value, format, meta):
     return None
 
 
-def convert_raw_html(text, format=None):
+def convert_raw_html(text: str, format: Optional[str] = None) -> 'applyJSONFilters':
     """Apply the `raw_html_filter` action to the text."""
     return applyJSONFilters([raw_html_filter], text, format=format)

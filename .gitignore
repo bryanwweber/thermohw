@@ -1,6 +1,9 @@
 # mypy cache
 .mypy_cache/
 
+# vscode settings
+.vscode/
+
 # pytest cache
 .pytest_cache/
 

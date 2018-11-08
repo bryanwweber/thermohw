@@ -13,6 +13,7 @@ build:
   noarch: python
   entry_points:
     - convert_thermo_hw = thermohw.convert_thermo_hw:main
+    - convert_thermo_exam = thermohw.convert_thermo_exam:main
 
 requirements:
   build:

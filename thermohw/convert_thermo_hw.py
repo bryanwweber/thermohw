@@ -21,7 +21,7 @@ between sections of the solution.
 
 Input files should be named according to the convention::
 
-    homwork-A-B.ipynb
+    homework-A-B.ipynb
 
 where ``A`` is the homework number and ``B`` is the problem number of
 this input file in the homework assignment.
@@ -37,7 +37,7 @@ main(argv=None): Process the command line arguments and run the
 
 """
 # Standard library
-from typing import Iterable, Dict, Sequence, Optional, List, Any
+from typing import Iterable, Dict, Sequence, Optional, List, Any, Union
 import os
 from pathlib import Path
 from argparse import ArgumentParser
@@ -46,41 +46,22 @@ from io import BytesIO
 from datetime import date
 
 # Third Party
-from nbconvert import NotebookExporter, PDFExporter  # type: ignore
-from traitlets.config import Config  # type: ignore
-from nbconvert.writers import FilesWriter  # type: ignore
-from pdfrw import PdfReader, PdfWriter  # type: ignore
+from nbconvert import NotebookExporter, PDFExporter
+from traitlets.config import Config
+from nbconvert.writers import FilesWriter
 
 # Local imports
 from .extract_attachments import ExtractAttachmentsPreprocessor
 from .pymarkdown import PyMarkdownPreprocessor
 from .preprocessors import HomeworkPreprocessor, SolnRemoverPreprocessor
 from .filters import convert_div, convert_raw_html
+from .utils import combine_pdf_as_bytes
 
 c = Config()
 here = os.path.abspath(os.path.dirname(__file__))
 c.PDFExporter.template_file = os.path.join(here, 'homework.tpl')
 c.PDFExporter.filters = {'convert_div': convert_div, 'convert_raw_html': convert_raw_html}
-
-
-def combine_pdf_as_bytes(pdfs: List[BytesIO]) -> bytes:
-    """Combine PDFs and return a bytestring with the result.
-
-    Arguments
-    ---------
-    pdfs
-        A list of BytesIO representations of PDFs
-
-    """
-    writer = PdfWriter()
-    for pdf in pdfs:
-        writer.addpages(PdfReader(pdf).pages)
-    bio = BytesIO()
-    writer.write(bio)
-    bio.seek(0)
-    output = bio.read()
-    bio.close()
-    return output
+c.PDFExporter.latex_count = 1
 
 
 assignment_nb_exp = NotebookExporter(
@@ -173,9 +154,11 @@ def process(hw_num: int,
     assignment_nb: str
     solution_nb: str
 
+    res: Dict[str, Union[str, bool]] = {'delete_pymarkdown': True}
+
     for problem in problems:
         print('Working on: ', problem)
-        res: Dict[str, str] = {'unique_key': problem.stem}
+        res['unique_key'] = problem.stem
         problem_number = int(problem.stem.split('-')[-1])
         if by_hand is not None and problem_number in by_hand:
             res['by_hand'] = True
@@ -191,12 +174,12 @@ def process(hw_num: int,
 
         assignment_nb, _ = assignment_nb_exp.from_filename(problem_fname, resources=res)
 
-        with ZipFile(assignment_zip_name, mode='a') as zip_file:  # type: ignore
+        with ZipFile(assignment_zip_name, mode='a') as zip_file:
             zip_file.writestr(problem.name, assignment_nb)
 
         solution_nb, _ = solution_nb_exp.from_filename(problem_fname, resources=res)
 
-        with ZipFile(solution_zip_name, mode='a') as zip_file:  # type: ignore
+        with ZipFile(solution_zip_name, mode='a') as zip_file:
             zip_file.writestr(problem.stem + '-soln' + problem.suffix, solution_nb)
 
     resources: Dict[str, Any] = {
