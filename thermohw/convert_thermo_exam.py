@@ -20,6 +20,7 @@ from nbconvert.writers import FilesWriter
 # Local imports
 from .pymarkdown import PyMarkdownPreprocessor
 from .preprocessors import ExamSAPreprocessor, ExamInstructionsPreprocessor, HomeworkPreprocessor
+from .extract_attachments import ExtractAttachmentsPreprocessor
 from .preprocessors import SolnRemoverPreprocessor
 from .filters import convert_div, convert_raw_html
 from .utils import combine_pdf_as_bytes
@@ -28,6 +29,8 @@ c = Config()
 here = os.path.abspath(os.path.dirname(__file__))
 c.PDFExporter.template_file = os.path.join(here, 'homework.tpl')
 c.PDFExporter.filters = {'convert_div': convert_div, 'convert_raw_html': convert_raw_html}
+c.PDFExporter.latex_count = 1
+
 
 sa_nb_exp = NotebookExporter(
     preprocessors=[
@@ -54,7 +57,11 @@ solution_nb_exp = NotebookExporter(
 )
 
 solution_pdf_exp = PDFExporter(
-    preprocessors=[PyMarkdownPreprocessor, HomeworkPreprocessor],
+    preprocessors=[
+        PyMarkdownPreprocessor,
+        HomeworkPreprocessor,
+        ExtractAttachmentsPreprocessor(config=c),
+    ],
     config=c,
 )
 solution_pdf_exp.writer.build_directory = '.'
