@@ -53,7 +53,7 @@ from nbconvert.writers import FilesWriter
 # Local imports
 from .extract_attachments import ExtractAttachmentsPreprocessor
 from .pymarkdown import PyMarkdownPreprocessor
-from .preprocessors import HomeworkPreprocessor, SolnRemoverPreprocessor
+from .preprocessors import RawRemover, SolnRemoverPreprocessor
 from .filters import convert_div, convert_raw_html
 from .utils import combine_pdf_as_bytes
 
@@ -66,7 +66,7 @@ c.PDFExporter.latex_count = 1
 
 assignment_nb_exp = NotebookExporter(
     preprocessors=[
-        HomeworkPreprocessor,
+        RawRemover,
         SolnRemoverPreprocessor,
         PyMarkdownPreprocessor,
     ],
@@ -74,14 +74,14 @@ assignment_nb_exp = NotebookExporter(
 
 solution_nb_exp = NotebookExporter(
     preprocessors=[
-        HomeworkPreprocessor,
+        RawRemover,
         PyMarkdownPreprocessor,
     ],
 )
 
 assignment_pdf_exp = PDFExporter(
     preprocessors=[
-        HomeworkPreprocessor,
+        RawRemover,
         SolnRemoverPreprocessor,
         PyMarkdownPreprocessor,
         ExtractAttachmentsPreprocessor(config=c),
@@ -92,7 +92,7 @@ assignment_pdf_exp.writer.build_directory = '.'
 
 solution_pdf_exp = PDFExporter(
     preprocessors=[
-        HomeworkPreprocessor,
+        RawRemover,
         PyMarkdownPreprocessor,
         ExtractAttachmentsPreprocessor(config=c),
     ],
@@ -154,7 +154,10 @@ def process(hw_num: int,
     assignment_nb: str
     solution_nb: str
 
-    res: Dict[str, Union[str, bool]] = {'delete_pymarkdown': True}
+    res: Dict[str, Union[str, bool]] = {
+        'delete_pymarkdown': True,
+        "global_content_filter": {"include_raw": False},
+    }
 
     for problem in problems:
         print('Working on: ', problem)

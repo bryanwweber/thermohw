@@ -97,66 +97,25 @@ grade on this exam.
 exam_instructions_cell = new_markdown_cell(source=exam_instructions_source)
 
 
-class HomeworkPreprocessor(Preprocessor):  # type: ignore
-    """Preprocess a homework problem to turn it into an assignment.
+class RawRemover(Preprocessor):  # type: ignore
+    """Remove any raw cells from the Notebook."""
 
-    This preprocessor produces output suitable for distribution to
-    students as an assignment. It has three main tasks:
+    def preprocess(self, nb: "NotebookNode", resources: dict) -> Tuple["NotebookNode", dict]:
+        """Remove any raw cells from the Notebook.
 
-    1. Remove any raw cells from the output entirely
-    2. If images are displayed by the ``Image`` display class, remove
-       that line and replace it with a note that the cell should be
-       deleted before being saved to PDF. This is to avoid issues with
-       images in the nbconvert conversion process.
-    3. Remove any lines from the second cell of the Notebook that are
-       for the instructor use. Lines that are retained are any
-       ``from ... import ...`` lines and any lines with ``matplotlib``
-       import related bits.
-    """
+        By default, exclude raw cells from the output. Change this by including
+        global_content_filter->include_raw = True in the resources dictionary.
+        This preprocessor is necessary because the NotebookExporter doesn't
+        include the exclude_raw config."""
+        if not resources.get("global_content_filter", {}).get("include_raw", False):
+            keep_cells = []
+            for cell in nb.cells:
+                if cell.cell_type != "raw":
+                    keep_cells.append(cell)
 
-    def preprocess(self, nb: 'NotebookNode', resources: dict) -> Tuple['NotebookNode', dict]:
-        """Preprocess the entire notebook."""
-        # Use this loop to remove raw cells because the NotebookExporter
-        # doesn't have the exclude_raw configurable option
-        keep_cells = []
-        for cell in nb.cells:
-            if cell.cell_type != 'raw':
-                keep_cells.append(cell)
+            nb.cells = keep_cells
 
-        nb.cells = keep_cells
-        for index, cell in enumerate(nb.cells):
-            nb.cells[index], resources = self.preprocess_cell(cell, resources, index)
         return nb, resources
-
-    def preprocess_cell(self, cell: 'NotebookNode',
-                        resources: dict, index: int) -> Tuple['NotebookNode', dict]:
-        """Preprocess each cell of the notebook."""
-        if cell.cell_type != 'code':
-            return cell, resources
-
-        cell.execution_count = None
-
-        if 'Image' in cell.source:
-            source = """# Delete this cell before exporting to PDF"""
-            cell.source = source
-            return cell, resources
-
-        if index == 1:
-            final_source = []
-            for l in cell.source.split('\n'):
-                if '%matplotlib inline' in l or 'import matplotlib' in l:
-                    final_source.append(l)
-                elif 'units.define' in l:
-                    final_source.append(l)
-                elif 'from' not in l:
-                    continue
-                else:
-                    final_source.append(l)
-
-            cell.source = '\n'.join(final_source)
-            return cell, resources
-
-        return cell, resources
 
 
 class SolnRemoverPreprocessor(Preprocessor):  # type: ignore
