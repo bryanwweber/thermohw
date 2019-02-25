@@ -53,7 +53,7 @@ from nbconvert.writers import FilesWriter
 # Local imports
 from .extract_attachments import ExtractAttachmentsPreprocessor
 from .pymarkdown import PyMarkdownPreprocessor
-from .preprocessors import RawRemover, SolnRemoverPreprocessor
+from .preprocessors import RawRemover, SolutionRemover
 from .filters import convert_div, convert_raw_html
 from .utils import combine_pdf_as_bytes
 
@@ -64,41 +64,24 @@ c.PDFExporter.filters = {'convert_div': convert_div, 'convert_raw_html': convert
 c.PDFExporter.latex_count = 1
 
 
-assignment_nb_exp = NotebookExporter(
+nb_exp = NotebookExporter(
     preprocessors=[
         RawRemover,
-        SolnRemoverPreprocessor,
+        SolutionRemover,
         PyMarkdownPreprocessor,
     ],
 )
 
-solution_nb_exp = NotebookExporter(
+pdf_exp = PDFExporter(
     preprocessors=[
         RawRemover,
-        PyMarkdownPreprocessor,
-    ],
-)
-
-assignment_pdf_exp = PDFExporter(
-    preprocessors=[
-        RawRemover,
-        SolnRemoverPreprocessor,
+        SolutionRemover,
         PyMarkdownPreprocessor,
         ExtractAttachmentsPreprocessor(config=c),
     ],
     config=c,
 )
-assignment_pdf_exp.writer.build_directory = '.'
-
-solution_pdf_exp = PDFExporter(
-    preprocessors=[
-        RawRemover,
-        PyMarkdownPreprocessor,
-        ExtractAttachmentsPreprocessor(config=c),
-    ],
-    config=c,
-)
-solution_pdf_exp.writer.build_directory = '.'
+pdf_exp.writer.build_directory = '.'
 
 
 def process(hw_num: int,
@@ -169,19 +152,21 @@ def process(hw_num: int,
             res['by_hand'] = False
         problem_fname = str(problem.resolve())
 
-        assignment_pdf, _ = assignment_pdf_exp.from_filename(problem_fname, resources=res)
+        # Process assignments
+        res["remove_solution"] = True
+        assignment_pdf, _ = pdf_exp.from_filename(problem_fname, resources=res)
         assignment_pdfs.append(BytesIO(assignment_pdf))
 
-        solution_pdf, _ = solution_pdf_exp.from_filename(problem_fname, resources=res)
-        solution_pdfs.append(BytesIO(solution_pdf))
-
-        assignment_nb, _ = assignment_nb_exp.from_filename(problem_fname, resources=res)
-
+        assignment_nb, _ = nb_exp.from_filename(problem_fname, resources=res)
         with ZipFile(assignment_zip_name, mode='a') as zip_file:
             zip_file.writestr(problem.name, assignment_nb)
 
-        solution_nb, _ = solution_nb_exp.from_filename(problem_fname, resources=res)
+        # Process solutions
+        res["remove_solution"] = False
+        solution_pdf, _ = pdf_exp.from_filename(problem_fname, resources=res)
+        solution_pdfs.append(BytesIO(solution_pdf))
 
+        solution_nb, _ = nb_exp.from_filename(problem_fname, resources=res)
         with ZipFile(solution_zip_name, mode='a') as zip_file:
             zip_file.writestr(problem.stem + '-soln' + problem.suffix, solution_nb)
 

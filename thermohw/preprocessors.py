@@ -118,43 +118,47 @@ class RawRemover(Preprocessor):  # type: ignore
         return nb, resources
 
 
-class SolnRemoverPreprocessor(Preprocessor):  # type: ignore
+class SolutionRemover(Preprocessor):  # type: ignore
     """Preprocess a homework problem to remove the solution.
 
-    This preprocessor produces output suitable for distribution to
-    students as an assignment. It has one task: remove the solution
-    from the Notebook. The preprocessor looks for a cell with the word
-    'solution' in it, which delimits the beginning of the solution
-    section. Then, for every cell after that, it checks for a level 3
-    header, which delimits the start of a section of the solution, for
-    multi-part problems. All cells between the level 3 headers are
-    replaced with a single code cell that asks the students to write
-    their code and explanation there.
+    This preprocessor produces output suitable for distribution to students as
+    an assignment by removing the solution from the Notebook. The preprocessor
+    looks for a cell with the header '## solution' (case-insensitive) in it,
+    which delimits the beginning of the solution section. Then, for every cell
+    after that, it checks for a level 3 header, which delimits the start of a
+    section of the solution. All cells between the level 3 headers are replaced
+    with cells that ask the students to write their code and explanation.
+
+    The processing is only done if the resources->remove_solution key is True.
     """
 
     def preprocess(self, nb: 'NotebookNode', resources: dict) -> Tuple['NotebookNode', dict]:
         """Preprocess the entire notebook."""
-        keep_cells_idx = []
-        for index, cell in enumerate(nb.cells):
-            if 'solution' in cell.source.lower():
-                keep_cells_idx.append(index)
-            # The space at the end of the test string here is important
-            elif len(keep_cells_idx) > 0 and cell.source.startswith('### '):
-                keep_cells_idx.append(index)
+        if "remove_solution" not in resources:
+            raise KeyError("The resources dictionary must have a remove_solution key.")
+        if resources["remove_solution"]:
+            keep_cells_idx = []
+            for index, cell in enumerate(nb.cells):
+                if '## solution' in cell.source.lower():
+                    keep_cells_idx.append(index)
+                # The space at the end of the test string here is important
+                elif len(keep_cells_idx) > 0 and cell.source.startswith('### '):
+                    keep_cells_idx.append(index)
 
-        keep_cells = nb.cells[:keep_cells_idx[0] + 1]
-        for i in keep_cells_idx[1:]:
-            keep_cells.append(nb.cells[i])
-            if resources['by_hand']:
-                keep_cells.append(by_hand_cell)
-            else:
-                if 'sketch' in nb.cells[i].source.lower():
-                    keep_cells.append(sketch_cell)
+            keep_cells = nb.cells[:keep_cells_idx[0] + 1]
+            for i in keep_cells_idx[1:]:
+                keep_cells.append(nb.cells[i])
+                if resources['by_hand']:
+                    keep_cells.append(by_hand_cell)
                 else:
-                    keep_cells.append(md_expl_cell)
-                    keep_cells.append(code_ans_cell)
-                    keep_cells.append(md_ans_cell)
-        nb.cells = keep_cells
+                    if 'sketch' in nb.cells[i].source.lower():
+                        keep_cells.append(sketch_cell)
+                    else:
+                        keep_cells.append(md_expl_cell)
+                        keep_cells.append(code_ans_cell)
+                        keep_cells.append(md_ans_cell)
+            nb.cells = keep_cells
+
         return nb, resources
 
 
