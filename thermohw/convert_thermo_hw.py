@@ -8,32 +8,26 @@ The single input Jupyter Notebook is converted into four files:
 - A Notebook with the solution
 - A PDF with the solution
 
-The second cell of the input Notebook must contain any imports required
-to run the problem as well as definitions that should not be shown to
-the students, either in the problem or the solution. This cell is
-processed so that only imports with ``from`` and matplotlib imports
-remain.
-
-The solution is detected as any cells below a Markdown cell with the
-word "solution" in the cell. Below the solution-delimiting cell, any
-Markdown cell with a level-three header (###) is retained as a divider
-between sections of the solution.
+The solution is detected as any cells below a Markdown cell with the phrase "##
+solution" in the cell. Below the solution-delimiting cell, any Markdown cell
+that starts with a level-three header (###) is retained as a divider between
+sections of the solution.
 
 Input files should be named according to the convention::
 
     homework-A-B.ipynb
 
-where ``A`` is the homework number and ``B`` is the problem number of
-this input file in the homework assignment.
+where ``A`` is the homework number and ``B`` is the problem number of this input
+file in the homework assignment.
 
 Methods
 -------
-process(hw_num, problems_to_do=None, prefix=None): Process the files
-    for homework number ``hw_num``. Only process the specific problems
-    in the ``problems`` argument.
+process(hw_num, problems_to_do=None, prefix=None): Process the files for
+    homework number ``hw_num``. Only process the specific problems in the
+    ``problems`` argument.
 
-main(argv=None): Process the command line arguments and run the
-    `process` function
+main(argv=None): Process the command line arguments and run the `process`
+    function
 
 """
 # Standard library
