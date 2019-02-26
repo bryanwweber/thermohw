@@ -1,16 +1,16 @@
 from setuptools import setup, find_packages
-from codecs import open
-from os import path
+from pathlib import Path
 from typing import Dict
 
-here = path.abspath(path.dirname(__file__))
+HERE = Path(__file__).parent
 
 version: Dict[str, str] = {}
-with open(path.join(here, 'thermohw', '_version.py')) as version_file:
+with HERE.joinpath("thermohw", "_version.py").open(mode="r") as version_file:
     exec(version_file.read(), version)
 
-with open(path.join(here, 'README.md')) as readme_file:
-    readme = readme_file.read()
+readme =  HERE.joinpath("README.md").read_text()
+changelog = HERE.joinpath("CHANGELOG.md").read_text()
+long_description = readme + "\n\n" + changelog
 
 install_requires = [
     "nbconvert>=5.3,<6.0",
