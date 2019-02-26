@@ -5,20 +5,21 @@ elements (which are the Pandoc AST representation of ``div`` elements)
 and convert them to a LaTeX environment with the appropriate name.
 """
 
+from enum import Enum, auto
 from typing import Any, Optional
 
 from pandocfilters import applyJSONFilters, RawBlock, RawInline
 
+
 # Allowed alert types are all from the Bootstrap alert types
 # https://getbootstrap.com/docs/4.1/components/alerts/
-ALLOWED_ALERT_TYPES = [
-    'success',
-    'primary',
-    'secondary',
-    'warning',
-    'danger',
-    'info',
-]
+class ALLOWED_ALERT_TYPES(Enum):
+    success = auto()
+    primary = auto()
+    secondary = auto()
+    warning = auto()
+    danger = auto()
+    info = auto()
 
 
 def div_filter(key: str, value: list, format: str, meta: Any) -> Optional[list]:
@@ -44,7 +45,7 @@ def div_filter(key: str, value: list, format: str, meta: Any) -> Optional[list]:
     except IndexError:
         return None
 
-    if alert_type not in ALLOWED_ALERT_TYPES:
+    if alert_type not in ALLOWED_ALERT_TYPES.__members__:
         return None
 
     filtered = [RawBlock('latex', rf'\begin{{{alert_type}box}}')]
