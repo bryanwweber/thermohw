@@ -26,17 +26,23 @@ if TYPE_CHECKING:
     from nbformat import NotebookNode  # noqa: F401 # typing only
 
 
-by_hand_source = ('**Attach an image of your solution for this problem in this cell. '
-                  'Attach multiple images if necessary. Please make sure the text is '
-                  'clear and legible.**')
+by_hand_source = (
+    "**Attach an image of your solution for this problem in this cell. "
+    "Attach multiple images if necessary. Please make sure the text is "
+    "clear and legible.**"
+)
 by_hand_cell = new_markdown_cell(source=by_hand_source)
 
-md_expl_source = ('**Write your engineering model, equations, and/or explanation of your process '
-                  'here.**')
+md_expl_source = (
+    "**Write your engineering model, equations, and/or explanation of your process "
+    "here.**"
+)
 md_expl_cell = new_markdown_cell(source=md_expl_source)
 
-code_ans_source = ('# Write your code here to solve the problem\n'
-                   '# Make sure to write your final answer in the cell below.')
+code_ans_source = (
+    "# Write your code here to solve the problem\n"
+    "# Make sure to write your final answer in the cell below."
+)
 code_ans_cell = new_code_cell(source=code_ans_source)
 
 md_ans_source = """\
@@ -48,7 +54,7 @@ md_ans_source = """\
 """
 md_ans_cell = new_markdown_cell(source=md_ans_source)
 
-sketch_source = '**Attach an image of your sketch for this problem in this cell.**'
+sketch_source = "**Attach an image of your sketch for this problem in this cell.**"
 sketch_cell = new_markdown_cell(source=sketch_source)
 
 exam_instructions_source = """\
@@ -100,7 +106,9 @@ exam_instructions_cell = new_markdown_cell(source=exam_instructions_source)
 class RawRemover(Preprocessor):  # type: ignore
     """Remove any raw cells from the Notebook."""
 
-    def preprocess(self, nb: "NotebookNode", resources: dict) -> Tuple["NotebookNode", dict]:
+    def preprocess(
+        self, nb: "NotebookNode", resources: dict
+    ) -> Tuple["NotebookNode", dict]:
         """Remove any raw cells from the Notebook.
 
         By default, exclude raw cells from the output. Change this by including
@@ -132,26 +140,28 @@ class SolutionRemover(Preprocessor):  # type: ignore
     The processing is only done if the resources->remove_solution key is True.
     """
 
-    def preprocess(self, nb: 'NotebookNode', resources: dict) -> Tuple['NotebookNode', dict]:
+    def preprocess(
+        self, nb: "NotebookNode", resources: dict
+    ) -> Tuple["NotebookNode", dict]:
         """Preprocess the entire notebook."""
         if "remove_solution" not in resources:
             raise KeyError("The resources dictionary must have a remove_solution key.")
         if resources["remove_solution"]:
             keep_cells_idx = []
             for index, cell in enumerate(nb.cells):
-                if '## solution' in cell.source.lower():
+                if "## solution" in cell.source.lower():
                     keep_cells_idx.append(index)
                 # The space at the end of the test string here is important
-                elif len(keep_cells_idx) > 0 and cell.source.startswith('### '):
+                elif len(keep_cells_idx) > 0 and cell.source.startswith("### "):
                     keep_cells_idx.append(index)
 
-            keep_cells = nb.cells[:keep_cells_idx[0] + 1]
+            keep_cells = nb.cells[: keep_cells_idx[0] + 1]
             for i in keep_cells_idx[1:]:
                 keep_cells.append(nb.cells[i])
-                if resources['by_hand']:
+                if resources["by_hand"]:
                     keep_cells.append(by_hand_cell)
                 else:
-                    if 'sketch' in nb.cells[i].source.lower():
+                    if "sketch" in nb.cells[i].source.lower():
                         keep_cells.append(sketch_cell)
                     else:
                         keep_cells.append(md_expl_cell)
@@ -165,11 +175,13 @@ class SolutionRemover(Preprocessor):  # type: ignore
 class ExamSAPreprocessor(Preprocessor):  # type: ignore
     """Preprocess a short-answer exam Notebook into the assignment."""
 
-    def preprocess(self, nb: 'NotebookNode', resources: dict) -> Tuple['NotebookNode', dict]:
+    def preprocess(
+        self, nb: "NotebookNode", resources: dict
+    ) -> Tuple["NotebookNode", dict]:
         """Preprocess the entire Notebook."""
         for index, cell in enumerate(nb.cells):
-            if '## Solution' in cell.source:
-                nb.cells[index + 1].source = ''
+            if "## Solution" in cell.source:
+                nb.cells[index + 1].source = ""
 
         return nb, resources
 
@@ -177,18 +189,22 @@ class ExamSAPreprocessor(Preprocessor):  # type: ignore
 class ExamInstructionsPreprocessor(Preprocessor):  # type: ignore
     """Preprocess an exam Notebook to add the instructions."""
 
-    def preprocess(self, nb: 'NotebookNode', resources: dict) -> Tuple['NotebookNode', dict]:
+    def preprocess(
+        self, nb: "NotebookNode", resources: dict
+    ) -> Tuple["NotebookNode", dict]:
         """Preprocess the entire Notebook."""
 
-        exam_num = resources['exam_num']
-        time = resources['time']
-        date = resources['date']
+        exam_num = resources["exam_num"]
+        time = resources["time"]
+        date = resources["date"]
 
-        nb.cells.insert(0, new_markdown_cell(source='---'))
-        nb.cells.insert(0, new_markdown_cell(source=''))
+        nb.cells.insert(0, new_markdown_cell(source="---"))
+        nb.cells.insert(0, new_markdown_cell(source=""))
         nb.cells.insert(0, exam_instructions_cell)
-        first_cell_source = ('# ME 2233: Thermodynamic Principles\n\n'
-                             f'# Exam {exam_num} - {time}\n\n# {date}')
+        first_cell_source = (
+            "# ME 2233: Thermodynamic Principles\n\n"
+            f"# Exam {exam_num} - {time}\n\n# {date}"
+        )
         nb.cells.insert(0, new_markdown_cell(source=first_cell_source))
 
         return nb, resources

@@ -87,16 +87,17 @@ class ExtractAttachmentsPreprocessor(Preprocessor):  # type: ignore # no types a
     The extracted outputs are returned in the 'resources' dictionary.
     """
 
-    output_filename_template = Unicode(
-        "{unique_key}_{cell_index}_{name}"
-    ).tag(config=True)
+    output_filename_template = Unicode("{unique_key}_{cell_index}_{name}").tag(
+        config=True
+    )
 
     extract_output_types = Set(
-        {'image/png', 'image/jpeg', 'image/svg+xml', 'application/pdf'}
+        {"image/png", "image/jpeg", "image/svg+xml", "application/pdf"}
     ).tag(config=True)
 
-    def preprocess_cell(self, cell: 'NotebookNode',
-                        resources: dict, cell_index: int) -> Tuple['NotebookNode', dict]:
+    def preprocess_cell(
+        self, cell: "NotebookNode", resources: dict, cell_index: int
+    ) -> Tuple["NotebookNode", dict]:
         """Apply a transformation on each cell.
 
         Parameters
@@ -111,34 +112,34 @@ class ExtractAttachmentsPreprocessor(Preprocessor):  # type: ignore # no types a
 
         """
         # Get files directory if it has been specified
-        output_files_dir = resources.get('output_files_dir', None)
+        output_files_dir = resources.get("output_files_dir", None)
 
         # Make sure outputs key exists
-        if not isinstance(resources['outputs'], dict):
-            resources['outputs'] = {}
+        if not isinstance(resources["outputs"], dict):
+            resources["outputs"] = {}
 
         # Loop through all of the attachments in the cell
         for name, attach in cell.get("attachments", {}).items():
             orig_name = name
-            name = re.sub(r'%[\w\d][\w\d]', '-', name)
+            name = re.sub(r"%[\w\d][\w\d]", "-", name)
             for mime, data in attach.items():
                 if mime not in self.extract_output_types:
                     continue
 
                 # Binary files are base64-encoded, SVG is already XML
-                if mime in {'image/png', 'image/jpeg', 'application/pdf'}:
+                if mime in {"image/png", "image/jpeg", "application/pdf"}:
                     # data is b64-encoded as text (str, unicode),
                     # we want the original bytes
                     data = a2b_base64(data)
-                elif sys.platform == 'win32':
-                    data = data.replace('\n', '\r\n').encode("UTF-8")
+                elif sys.platform == "win32":
+                    data = data.replace("\n", "\r\n").encode("UTF-8")
                 else:
                     data = data.encode("UTF-8")
 
                 filename = self.output_filename_template.format(
                     cell_index=cell_index,
                     name=name,
-                    unique_key=resources.get('unique_key', ''),
+                    unique_key=resources.get("unique_key", ""),
                 )
 
                 if output_files_dir is not None:
@@ -149,7 +150,7 @@ class ExtractAttachmentsPreprocessor(Preprocessor):  # type: ignore # no types a
 
                 # In the resources, make the figure available via
                 #   resources['outputs']['filename'] = data
-                resources['outputs'][filename] = data
+                resources["outputs"][filename] = data
 
                 # now we need to change the cell source so that it links to the
                 # filename instead of `attachment:`

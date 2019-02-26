@@ -53,17 +53,16 @@ from .utils import combine_pdf_as_bytes
 
 c = Config()
 here = os.path.abspath(os.path.dirname(__file__))
-c.PDFExporter.template_file = os.path.join(here, 'homework.tpl')
-c.PDFExporter.filters = {'convert_div': convert_div, 'convert_raw_html': convert_raw_html}
+c.PDFExporter.template_file = os.path.join(here, "homework.tpl")
+c.PDFExporter.filters = {
+    "convert_div": convert_div,
+    "convert_raw_html": convert_raw_html,
+}
 c.PDFExporter.latex_count = 1
 
 
 nb_exp = NotebookExporter(
-    preprocessors=[
-        RawRemover,
-        SolutionRemover,
-        PyMarkdownPreprocessor,
-    ],
+    preprocessors=[RawRemover, SolutionRemover, PyMarkdownPreprocessor]
 )
 
 pdf_exp = PDFExporter(
@@ -75,14 +74,15 @@ pdf_exp = PDFExporter(
     ],
     config=c,
 )
-pdf_exp.writer.build_directory = '.'
+pdf_exp.writer.build_directory = "."
 
 
-def process(hw_num: int,
-            problems_to_do: Optional[Iterable[int]] = None,
-            prefix: Optional[Path] = None,
-            by_hand: Optional[Iterable[int]] = None,
-            ) -> None:
+def process(
+    hw_num: int,
+    problems_to_do: Optional[Iterable[int]] = None,
+    prefix: Optional[Path] = None,
+    by_hand: Optional[Iterable[int]] = None,
+) -> None:
     """Process the homework problems in ``prefix`` folder.
 
     Arguments
@@ -99,7 +99,7 @@ def process(hw_num: int,
 
     """
     if prefix is None:
-        prefix = Path('.')
+        prefix = Path(".")
 
     problems: Iterable[Path]
 
@@ -111,17 +111,17 @@ def process(hw_num: int,
         # either nothing or, rarely, another digit), then the ipynb
         # extension. Examples:
         # homework-1-1.ipynb, homework-10-1.ipynb, homework-3-10.ipynb
-        problems = list(prefix.glob(f'homework-{hw_num}-[0-9]*.ipynb'))
+        problems = list(prefix.glob(f"homework-{hw_num}-[0-9]*.ipynb"))
     else:
-        problems = [prefix/f'homework-{hw_num}-{i}.ipynb' for i in problems_to_do]
+        problems = [prefix / f"homework-{hw_num}-{i}.ipynb" for i in problems_to_do]
 
     problems = sorted(problems, key=lambda k: k.stem[-1])
 
-    output_directory: Path = (prefix/'output').resolve()
+    output_directory: Path = (prefix / "output").resolve()
     fw = FilesWriter(build_directory=str(output_directory))
 
-    assignment_zip_name = output_directory/f'homework-{hw_num}.zip'
-    solution_zip_name = output_directory/f'homework-{hw_num}-soln.zip'
+    assignment_zip_name = output_directory / f"homework-{hw_num}.zip"
+    solution_zip_name = output_directory / f"homework-{hw_num}-soln.zip"
 
     assignment_pdfs: List[BytesIO] = []
     solution_pdfs: List[BytesIO] = []
@@ -132,18 +132,18 @@ def process(hw_num: int,
     solution_nb: str
 
     res: Dict[str, Union[str, bool]] = {
-        'delete_pymarkdown': True,
+        "delete_pymarkdown": True,
         "global_content_filter": {"include_raw": False},
     }
 
     for problem in problems:
-        print('Working on: ', problem)
-        res['unique_key'] = problem.stem
-        problem_number = int(problem.stem.split('-')[-1])
+        print("Working on:", problem)
+        res["unique_key"] = problem.stem
+        problem_number = int(problem.stem.split("-")[-1])
         if by_hand is not None and problem_number in by_hand:
-            res['by_hand'] = True
+            res["by_hand"] = True
         else:
-            res['by_hand'] = False
+            res["by_hand"] = False
         problem_fname = str(problem.resolve())
 
         # Process assignments
@@ -152,7 +152,7 @@ def process(hw_num: int,
         assignment_pdfs.append(BytesIO(assignment_pdf))
 
         assignment_nb, _ = nb_exp.from_filename(problem_fname, resources=res)
-        with ZipFile(assignment_zip_name, mode='a') as zip_file:
+        with ZipFile(assignment_zip_name, mode="a") as zip_file:
             zip_file.writestr(problem.name, assignment_nb)
 
         # Process solutions
@@ -161,42 +161,52 @@ def process(hw_num: int,
         solution_pdfs.append(BytesIO(solution_pdf))
 
         solution_nb, _ = nb_exp.from_filename(problem_fname, resources=res)
-        with ZipFile(solution_zip_name, mode='a') as zip_file:
-            zip_file.writestr(problem.stem + '-soln' + problem.suffix, solution_nb)
+        with ZipFile(solution_zip_name, mode="a") as zip_file:
+            zip_file.writestr(problem.stem + "-soln" + problem.suffix, solution_nb)
 
     resources: Dict[str, Any] = {
-        'metadata': {
-            'name': f'homework-{hw_num}',
-            'path': str(prefix),
-            'modified_date': date.today().strftime('%B %d, %Y'),
+        "metadata": {
+            "name": f"homework-{hw_num}",
+            "path": str(prefix),
+            "modified_date": date.today().strftime("%B %d, %Y"),
         },
-        'output_extension': '.pdf',
+        "output_extension": ".pdf",
     }
-    fw.write(combine_pdf_as_bytes(assignment_pdfs), resources, f'homework-{hw_num}')
+    fw.write(combine_pdf_as_bytes(assignment_pdfs), resources, f"homework-{hw_num}")
 
-    resources['metadata']['name'] = f'homework-{hw_num}-soln'
-    fw.write(combine_pdf_as_bytes(solution_pdfs), resources, f'homework-{hw_num}-soln')
+    resources["metadata"]["name"] = f"homework-{hw_num}-soln"
+    fw.write(combine_pdf_as_bytes(solution_pdfs), resources, f"homework-{hw_num}-soln")
 
 
 def main(argv: Optional[Sequence[str]] = None) -> None:
     """Parse arguments and process the homework assignment."""
-    parser = ArgumentParser(
-        description="Convert Jupyter Notebook assignments to PDFs",
+    parser = ArgumentParser(description="Convert Jupyter Notebook assignments to PDFs")
+    parser.add_argument(
+        "--hw",
+        type=int,
+        required=True,
+        help="Homework number to convert",
+        dest="hw_num",
     )
-    parser.add_argument('--hw', type=int, required=True, help="Homework number to convert",
-                        dest='hw_num')
-    parser.add_argument('-p', '--problems', type=int,
-                        help="Problem numbers to convert",
-                        dest='problems',
-                        nargs='*')
-    parser.add_argument('--by-hand', type=int,
-                        help="Problem numbers to be completed by hand",
-                        dest='by_hand',
-                        nargs='*')
+    parser.add_argument(
+        "-p",
+        "--problems",
+        type=int,
+        help="Problem numbers to convert",
+        dest="problems",
+        nargs="*",
+    )
+    parser.add_argument(
+        "--by-hand",
+        type=int,
+        help="Problem numbers to be completed by hand",
+        dest="by_hand",
+        nargs="*",
+    )
     args = parser.parse_args(argv)
-    prefix = Path(f'homework/homework-{args.hw_num}')
+    prefix = Path(f"homework/homework-{args.hw_num}")
     process(args.hw_num, args.problems, prefix=prefix, by_hand=args.by_hand)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -65,13 +65,15 @@ class PyMarkdownPreprocessor(Preprocessor):  # type: ignore
         """Replace {{variable-name}} with stored value."""
         try:
             replaced = re.sub(
-                "{{(.*?)}}", lambda m: variables.get(m.group(1), ''), source)
+                "{{(.*?)}}", lambda m: variables.get(m.group(1), ""), source
+            )
         except TypeError:
             replaced = source
         return replaced
 
-    def preprocess_cell(self, cell: 'NotebookNode',
-                        resources: dict, index: int) -> Tuple['NotebookNode', dict]:
+    def preprocess_cell(
+        self, cell: "NotebookNode", resources: dict, index: int
+    ) -> Tuple["NotebookNode", dict]:
         """Preprocess cell.
 
         Parameters
@@ -86,10 +88,9 @@ class PyMarkdownPreprocessor(Preprocessor):  # type: ignore
 
         """
         if cell.cell_type == "markdown":
-            variables = cell['metadata'].get('variables', {})
+            variables = cell["metadata"].get("variables", {})
             if len(variables) > 0:
-                cell.source = self.replace_variables(
-                    cell.source, variables)
-                if resources.get('delete_pymarkdown', False):
-                    del cell.metadata['variables']
+                cell.source = self.replace_variables(cell.source, variables)
+                if resources.get("delete_pymarkdown", False):
+                    del cell.metadata["variables"]
         return cell, resources
