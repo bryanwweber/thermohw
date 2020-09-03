@@ -1,17 +1,12 @@
-sudo: false
 language: generic
+dist: focal
+os: linux
 
 addons:
   apt:
     packages:
     - texlive-xetex
-    - latex-xcolor
-    - texlive-fonts-recommended
-    - texlive-latex-recommended
-    - texlive-latex-extra
-    - texlive-generic-recommended
-    - pgf
-
+    - pandoc
 env:
   global:
     secure: PNrNZupNoqnRGx3RYK5MY+18ZzQcit7J+mCfYdCFwjVNizWRgqqbclg0kRe2cyvL6Gnx+dDpkf8bhgCf8jIA42RGH9j4IIb5NNOTxtrJzpAyKsumsNW8YcqISU6dYYssJbXhjJNLVmF54s1hMSuXB8K1Kkj6roV1Qa8rqjDwZPjMjNciTACrw+/Vrgmq0A4ZEIka2Ebg3PDuPE91ibNADjnJkPDH054MhRL5PMx9gdN/eNWnp2Pp5+iMKt41nb76v5kewD8QiZ+inzyrbElvezjyjjzcqtUKZjDdDLKqJ9jDwZkeIkTuC8DuuptPsJ0zSscPrAvqmFI5iKlItgv5zO8nGaUD5T03wW+C3GB3ZZ5JvD68vSbLGPU8RHbdb9ywKObSPLElsSEJzmwMk0uNrEP33UQZGum/a4qAUtjxw5D/ViXJzeGr1Kc9RWYlCuTOfNU6jFs4QakW//dNNGOb1OF7wiX/+HlyGUOofeW79B7uV2mZzyC7PS/kHq/A8jC09JvZCo+kEgRmgO4kzeABO1tXXIjcUelEcwEpHLBOIHcEiMLduKgPbx/s3tTEIXU3jiibkJ5jrMgIsbZBpm1IANTDrctyrNpC7k9+D6uWIkF6bEGVo65heDqRsBEnn5Lcs2xhb2kVH9G3fbCntDVZNS1QqTrrU2WjpTTiDvn0UXk=
@@ -44,10 +39,10 @@ script:
 
 deploy:
   provider: pypi
-  user: bryanwweber
+  username: bryanwweber
   on:
     tags: true
   distributions: sdist bdist_wheel
-  skip_upload_docs: true
+  upload_docs: false
   password:
     secure: ecPXKFQ/Z/eaH/k0g6/kMQBVEJS4m9cs8G6XlhejLJ18SzX0c2Cf69MPsQrsRgnaXyqSX6nIrImVD+reZV0U7ZThO0do5UQNeFMsZk8gRmEUlJvlqrOtnZqbEWzJe3DV5G32GAwMAVRXdbfzPjU02JvgqZVOajQJHkMgUsfew/f92Ls3+LxV+vPppc4M2VH3Mdk7d7oCZtdUkx+EUqINjpxDbHj6D0D1Y+wgXTJGHA7RhMuKop1lr1LdB/sVMZOGoMzmzYPeN31zztqQtDU5gTTcyk7vQ2eug5tzhK1PZJh5DO1YnLkxFFXooFq8c/TcQBv91flfaxyIeilys+1zwVKpVetmSH3ktOm8PRMdnBq9AZs06f9f3LUuaOXh9AW/4R9nMyPa56e/Hd5/bqLbwHTzs1D0cMuiLpsf3VDHHLd+nQrsYJxZq/yL1A4SsgzdPKhGO5C5wY2f4RKArik/Nhwl7b/gj+SPN5e8vuUiJy7d4O4dq4xAjSHBf8XuuxqjYGy49jOWbV8LAxS55LDa/8A4iJS7hSZaviqhgr7CI9XmqhvQ0CDpNWPEU7Wr3LCRiIsyDDUBSQZPqiFN+7iZ82/Qbg2LfApE6xZ87uCcV9du0J5c2HJ6YwM7z2NHar0FE0tsob0p/cWY3rrLoNMqROjLhF1FBU9fNOp8cRjlxEA=
