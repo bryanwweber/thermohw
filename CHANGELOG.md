@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- markdownlint-disable MD022 MD024 MD032 -->
 
+## [0.5.1] - 2020-SEP-03
+### Fixed
+- The version number was incorrect for v0.5.0
+- Tests!
+
 ## [0.5.0] - 2020-SEP-03
 ### Added
 - Add ability to process exam files into assignments and solutions
@@ -123,6 +128,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Convert Jupyter Notebook to a set of Notebooks, with and without solutions
 - README with instructions for use
 
+[0.5.1]: https://github.com/bryanwweber/thermohw/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/bryanwweber/thermohw/compare/v0.4.2...v0.5.0
 [0.4.2]: https://github.com/bryanwweber/thermohw/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/bryanwweber/thermohw/compare/v0.4.0...v0.4.1
