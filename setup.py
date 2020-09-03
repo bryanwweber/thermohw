@@ -8,7 +8,7 @@ version: Dict[str, str] = {}
 with HERE.joinpath("thermohw", "_version.py").open(mode="r") as version_file:
     exec(version_file.read(), version)
 
-readme =  HERE.joinpath("README.md").read_text()
+readme = HERE.joinpath("README.md").read_text()
 changelog = HERE.joinpath("CHANGELOG.md").read_text()
 long_description = readme + "\n\n" + changelog
 
@@ -19,10 +19,9 @@ install_requires = [
     "pandocfilters>=1.4,<2.0",
 ]
 
-# tests_require = [
-#     'pytest>=3.2.0',
-#     'pytest-cov',
-# ]
+tests_require = [
+    "pytest>=3.2.0",
+]
 
 setup(
     name="thermohw",
@@ -49,7 +48,7 @@ setup(
         "Programming Language :: Python :: 3.7",
         "Topic :: Scientific/Engineering :: Chemistry",
     ],
-    # tests_require=tests_require,
+    tests_require=tests_require,
     python_requires="~=3.6",
     entry_points={
         "console_scripts": [
