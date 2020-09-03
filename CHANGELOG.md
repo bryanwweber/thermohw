@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 ### Fixed
+- Files without `### part name` now correctly excludes the solution
 
 ### Removed
 

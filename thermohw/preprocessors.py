@@ -16,7 +16,7 @@ SolnRemoverPreprocessor:
 """
 
 # Standard Library
-from typing import TYPE_CHECKING, Tuple
+from typing import TYPE_CHECKING, Tuple, List
 
 # Third-Party
 from nbconvert.preprocessors import Preprocessor
@@ -28,8 +28,8 @@ if TYPE_CHECKING:
 
 by_hand_source = (
     "**Attach an image of your solution for this problem in this cell. "
-    "Attach multiple images if necessary. Please make sure the text is "
-    "clear and legible.**"
+    "Attach multiple images, one in each cell, if necessary. Please make "
+    "sure the text is clear and legible.**"
 )
 by_hand_cell = new_markdown_cell(source=by_hand_source)
 
@@ -146,16 +146,35 @@ class SolutionRemover(Preprocessor):  # type: ignore
         """Preprocess the entire notebook."""
         if "remove_solution" not in resources:
             raise KeyError("The resources dictionary must have a remove_solution key.")
-        if resources["remove_solution"]:
-            keep_cells_idx = []
-            for index, cell in enumerate(nb.cells):
-                if "## solution" in cell.source.lower():
-                    keep_cells_idx.append(index)
-                # The space at the end of the test string here is important
-                elif len(keep_cells_idx) > 0 and cell.source.startswith("### "):
-                    keep_cells_idx.append(index)
+        if not resources["remove_solution"]:
+            return nb, resources
 
-            keep_cells = nb.cells[: keep_cells_idx[0] + 1]
+        keep_cells_idx: List[int] = []
+        for index, cell in enumerate(nb.cells):
+            if "## solution" in cell.source.lower():
+                keep_cells_idx.append(index)
+            # The space at the end of the test string here is important
+            elif len(keep_cells_idx) > 0 and cell.source.startswith("### "):
+                keep_cells_idx.append(index)
+
+        if len(keep_cells_idx) == 0:
+            raise ValueError(
+                "The Notebook must have a cell with the text '## solution' "
+                "(case insensitive) in it."
+            )
+
+        keep_cells = nb.cells[: keep_cells_idx[0] + 1]
+        if len(keep_cells_idx) == 1:
+            if resources["by_hand"]:
+                keep_cells.append(by_hand_cell)
+            else:
+                if "sketch" in nb.cells[keep_cells_idx[0]].source.lower():
+                    keep_cells.append(sketch_cell)
+                else:
+                    keep_cells.append(md_expl_cell)
+                    keep_cells.append(code_ans_cell)
+                    keep_cells.append(md_ans_cell)
+        else:
             for i in keep_cells_idx[1:]:
                 keep_cells.append(nb.cells[i])
                 if resources["by_hand"]:
@@ -167,8 +186,8 @@ class SolutionRemover(Preprocessor):  # type: ignore
                         keep_cells.append(md_expl_cell)
                         keep_cells.append(code_ans_cell)
                         keep_cells.append(md_ans_cell)
-            nb.cells = keep_cells
 
+        nb.cells = keep_cells
         return nb, resources
 
 
