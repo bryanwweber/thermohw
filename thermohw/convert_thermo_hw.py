@@ -131,7 +131,7 @@ def process(
     assignment_nb: str
     solution_nb: str
 
-    res: Dict[str, Union[str, bool]] = {
+    res: Dict[str, Union[Dict[str, bool], str, bool]] = {
         "delete_pymarkdown": True,
         "global_content_filter": {"include_raw": False},
     }
