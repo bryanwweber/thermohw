@@ -7,14 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- markdownlint-disable MD022 MD024 MD032 -->
 
-## [Unreleased]
-### Added
-
+## [0.5.2] - 2020-SEP-03
 ### Changed
-
-### Fixed
-
-### Removed
+- Switch to GitHub Actions
 
 ## [0.5.1] - 2020-SEP-03
 ### Fixed
@@ -137,7 +132,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Convert Jupyter Notebook to a set of Notebooks, with and without solutions
 - README with instructions for use
 
-[Unreleased]: https://github.com/bryanwweber/thermohw/compare/v0.5.1...HEAD
+[0.5.2]: https://github.com/bryanwweber/thermohw/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/bryanwweber/thermohw/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/bryanwweber/thermohw/compare/v0.4.2...v0.5.0
 [0.4.2]: https://github.com/bryanwweber/thermohw/compare/v0.4.1...v0.4.2
