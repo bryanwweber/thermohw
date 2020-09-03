@@ -7,16 +7,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- markdownlint-disable MD022 MD024 MD032 -->
 
-## [Unreleased]
+## [0.5.0] - 2020-SEP-03
 ### Added
 - Add ability to process exam files into assignments and solutions
+- Cells that contain the word "Sketch" indicate that they require an image submission
 
 ### Changed
+- Run Black on all the code files
+- Delete Pymarkdown variables from the cell metadata to avoid revealing the solutions
+- Move `combine_pdf_as_bytes()` to `utils.py`
+- Only run `xelatex` on the converted files once
 
 ### Fixed
 - Files without `### part name` now correctly excludes the solution
 
 ### Removed
+- The `HomeworkPreprocessor` class was no longer useful, because it was removing things it shouldn't have been
 
 ## [0.4.2] - 2018-SEP-03
 ### Added
@@ -117,7 +123,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Convert Jupyter Notebook to a set of Notebooks, with and without solutions
 - README with instructions for use
 
-[Unreleased]: https://github.com/bryanwweber/thermohw/compare/v0.4.2...HEAD
+[0.5.0]: https://github.com/bryanwweber/thermohw/compare/v0.4.2...v0.5.0
 [0.4.2]: https://github.com/bryanwweber/thermohw/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/bryanwweber/thermohw/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/bryanwweber/thermohw/compare/v0.3.1...v0.4.0
