@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- markdownlint-disable MD022 MD024 MD032 -->
 
-## [Unreleased]
+## [0.6.0] - 2020-SEP-11
 ### Added
 - Option to clean the output folder can be specified.
 - Test with the latest Python 3.9
@@ -17,8 +17,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Fix uploading the Anaconda package
-
-### Removed
 
 ## [0.5.2] - 2020-SEP-03
 ### Changed
@@ -145,7 +143,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Convert Jupyter Notebook to a set of Notebooks, with and without solutions
 - README with instructions for use
 
-[Unreleased]: https://github.com/bryanwweber/thermohw/compare/v0.5.2...HEAD
+[0.6.0]: https://github.com/bryanwweber/thermohw/compare/v0.5.2...v0.6.0
 [0.5.2]: https://github.com/bryanwweber/thermohw/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/bryanwweber/thermohw/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/bryanwweber/thermohw/compare/v0.4.2...v0.5.0
