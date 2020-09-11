@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8]
+        python-version: [3.6, 3.7, 3.8, '3.9.0-alpha - 3.9.0']
       fail-fast: false
 
     steps:
@@ -67,7 +67,7 @@ jobs:
       shell: bash -l {0}
     - name: Upload package to anaconda.org
       run: |
-        anaconda -t ${{ secrets.ANACONDA_TOKEN }} upload $CONDA/conda-bld/*/thermostate*.tar.bz2
+        anaconda -t ${{ secrets.ANACONDA_TOKEN }} upload $CONDA/conda-bld/*/thermohw*.tar.bz2
       shell: bash -l {0}
       if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
 
