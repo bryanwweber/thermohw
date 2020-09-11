@@ -1,6 +1,6 @@
 % Default to the notebook output style
 ((* if not cell_style is defined *))
-    ((* set cell_style = 'style_ipython.tplx' *))
+    ((* set cell_style = 'style_jupyter.tplx' *))
 ((* endif *))
 
 % Inherit from the specified cell style.
@@ -34,13 +34,6 @@
 
 ((( super() )))
 ((* endblock commands *))
-
-((* block packages *))
-((( super() )))
-
-\usepackage{tcolorbox}
-
-((* endblock packages *))
 
 % Render markdown but remove figure environment and convert
 % appropriate divs to boxes

@@ -13,7 +13,7 @@ changelog = HERE.joinpath("CHANGELOG.md").read_text()
 long_description = readme + "\n\n" + changelog
 
 install_requires = [
-    "nbconvert>=5.3,<6.0",
+    "nbconvert>=5.5,<6.0",
     "traitlets>=4.3,<5.0",
     "pdfrw>=0.4,<0.5",
     "pandocfilters>=1.4,<2.0",
@@ -46,6 +46,7 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
         "Topic :: Scientific/Engineering :: Chemistry",
     ],
     tests_require=tests_require,
