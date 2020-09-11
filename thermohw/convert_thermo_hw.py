@@ -38,6 +38,8 @@ from argparse import ArgumentParser
 from zipfile import ZipFile
 from io import BytesIO
 from datetime import date
+import shutil
+import sys
 
 # Third Party
 from nbconvert import NotebookExporter, PDFExporter
@@ -203,8 +205,21 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
         dest="by_hand",
         nargs="*",
     )
+    parser.add_argument(
+        "--clean",
+        action="store_true",
+        help=(
+            "Remove the output folder. If --problems is passed, the specified"
+            "problems will be processed. Otherwise, will exit after cleaning."
+        ),
+    )
     args = parser.parse_args(argv)
     prefix = Path(f"homework/homework-{args.hw_num}")
+    if args.clean:
+        shutil.rmtree(prefix.joinpath("output"), ignore_errors=True)
+        if not args.problems:
+            sys.exit(0)
+
     process(args.hw_num, args.problems, prefix=prefix, by_hand=args.by_hand)
 
 

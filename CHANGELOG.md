@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Option to clean the output folder can be specified.
 
 ### Changed
 - Change base template for our template to `style_jupyter` instead of `style_ipython`. Has a number of benefits, most notably, line breaking in code cells.
