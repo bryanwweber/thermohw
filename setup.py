@@ -52,10 +52,7 @@ setup(
     tests_require=tests_require,
     python_requires="~=3.6",
     entry_points={
-        "console_scripts": [
-            "convert_thermo_hw=thermohw.convert_thermo_hw:main",
-            "convert_thermo_exam=thermohw.convert_thermo_exam:main",
-        ]
+        "console_scripts": ["convert_thermo_hw=thermohw.convert_thermo_hw:main"]
     },
     include_package_data=True,
     zip_safe=False,
