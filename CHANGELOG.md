@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
+- Highlighted answer cells cannot be deleted in the assignment notebook
 
 ### Fixed
 - Type hinting for `resources` dictionaries in some preprocessors

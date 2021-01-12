@@ -53,6 +53,7 @@ md_ans_source = """\
 </div>
 """
 md_ans_cell = new_markdown_cell(source=md_ans_source)
+md_ans_cell.metadata.deletable = False
 
 sketch_source = "**Attach an image of your sketch for this problem in this cell.**"
 sketch_cell = new_markdown_cell(source=sketch_source)
