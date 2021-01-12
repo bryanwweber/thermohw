@@ -17,6 +17,7 @@ SolnRemoverPreprocessor:
 
 # Standard Library
 from typing import TYPE_CHECKING, Tuple, List, Dict
+import warnings
 
 # Third-Party
 from nbconvert.preprocessors import Preprocessor
@@ -86,12 +87,25 @@ class SolutionRemover(Preprocessor):  # type: ignore
     """Preprocess a homework problem to remove the solution.
 
     This preprocessor produces output suitable for distribution to students as
-    an assignment by removing the solution from the Notebook. The preprocessor
-    looks for a cell with the header '## solution' (case-insensitive) in it,
-    which delimits the beginning of the solution section. Then, for every cell
-    after that, it checks for a level 3 header, which delimits the start of a
-    section of the solution. All cells between the level 3 headers are replaced
-    with cells that ask the students to write their code and explanation.
+    an assignment by removing the solution from the Notebook.
+
+    The solution cells are found by tags attached to the cells. A cell tagged
+    ``solution`` will start the Solution section. Following that, any cell
+    tagged ``part`` will insert a solution prompt into the assignment. If the
+    additional tag ``sketch`` is added, then a prompt for a sketch is inserted
+    instead. Prior to the start of the Solution, all cells are kept.
+
+    To enable the legacy processing behavior, described below, the
+    resources->legacy key must be set to True. If no legacy key is present in
+    resources, the default is assumed to be True for now. This will change in
+    the future.
+
+    The preprocessor looks for a cell with the header '## solution'
+    (case-insensitive) in it, which delimits the beginning of the solution
+    section. Then, for every cell after that, it checks for a level 3 header,
+    which delimits the start of a section of the solution. All cells between the
+    level 3 headers are replaced with cells that ask the students to write their
+    code and explanation.
 
     The processing is only done if the resources->remove_solution key is True.
     """
@@ -105,6 +119,47 @@ class SolutionRemover(Preprocessor):  # type: ignore
         if not resources["remove_solution"]:
             return nb, resources
 
+        if resources.get("legacy", True):
+            warnings.warn(
+                "The legacy behavior for finding solution cells will be removed in "
+                "the future.",
+                FutureWarning,
+            )
+            return self.legacy_parser(nb, resources)
+
+        keep_cells: List["NotebookNode"] = []
+        solution_started = False
+        for cell in nb.cells:
+            if "tags" in cell.metadata:
+                tags = cell.metadata["tags"][:]
+                del cell.metadata["tags"]
+            else:
+                tags = []
+            if "solution" in tags:
+                solution_started = True
+                keep_cells.append(cell)
+            elif "part" in tags:
+                keep_cells.append(cell)
+                if "sketch" in tags:
+                    keep_cells.append(sketch_cell)
+                elif resources["by_hand"]:
+                    keep_cells.append(by_hand_cell)
+                else:
+                    keep_cells.append(md_expl_cell)
+                    keep_cells.append(code_ans_cell)
+                    keep_cells.append(md_ans_cell)
+            else:
+                if tags:
+                    warnings.warn(f"Unknown tag value: {tags}", UserWarning)
+                if not solution_started:
+                    keep_cells.append(cell)
+
+        nb.cells = keep_cells
+        return nb, resources
+
+    def legacy_parser(
+        self, nb: "NotebookNode", resources: Dict[str, bool]
+    ) -> Tuple["NotebookNode", Dict[str, bool]]:
         keep_cells_idx: List[int] = []
         for index, cell in enumerate(nb.cells):
             if "## solution" in cell.source.lower():
