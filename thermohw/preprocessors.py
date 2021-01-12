@@ -16,7 +16,7 @@ SolnRemoverPreprocessor:
 """
 
 # Standard Library
-from typing import TYPE_CHECKING, Tuple, List
+from typing import TYPE_CHECKING, Tuple, List, Dict
 
 # Third-Party
 from nbconvert.preprocessors import Preprocessor
@@ -62,8 +62,8 @@ class RawRemover(Preprocessor):  # type: ignore
     """Remove any raw cells from the Notebook."""
 
     def preprocess(
-        self, nb: "NotebookNode", resources: dict
-    ) -> Tuple["NotebookNode", dict]:
+        self, nb: "NotebookNode", resources: Dict[str, Dict[str, bool]]
+    ) -> Tuple["NotebookNode", Dict[str, Dict[str, bool]]]:
         """Remove any raw cells from the Notebook.
 
         By default, exclude raw cells from the output. Change this by including
@@ -96,8 +96,8 @@ class SolutionRemover(Preprocessor):  # type: ignore
     """
 
     def preprocess(
-        self, nb: "NotebookNode", resources: dict
-    ) -> Tuple["NotebookNode", dict]:
+        self, nb: "NotebookNode", resources: Dict[str, bool]
+    ) -> Tuple["NotebookNode", Dict[str, bool]]:
         """Preprocess the entire notebook."""
         if "remove_solution" not in resources:
             raise KeyError("The resources dictionary must have a remove_solution key.")

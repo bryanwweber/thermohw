@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 ### Fixed
+- Type hinting for `resources` dictionaries in some preprocessors
 
 ### Removed
 - Remove exam processing, which didn't work well and wasn't really used
