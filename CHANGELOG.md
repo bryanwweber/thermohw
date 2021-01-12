@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 ### Fixed
+- IPython package is a dependency for its code lexer
 
 ### Removed
 

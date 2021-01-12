@@ -26,6 +26,7 @@ requirements:
     - traitlets >=4.3,<5.0
     - pdfrw >=0.4,<0.5
     - pandocfilters >=1.4,<2.0
+    - ipython >=7.0,<8.0
 
 test:
   source_files:
