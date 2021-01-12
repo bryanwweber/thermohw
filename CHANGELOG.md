@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Highlighted answer cells cannot be deleted in the assignment notebook
 - Support for Python 3.6 is dropped
+- Moved to `src` directory layout and don't include tests with the package
 
 ### Fixed
 - Type hinting for `resources` dictionaries in some preprocessors

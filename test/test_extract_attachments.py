@@ -2,7 +2,7 @@
 from nbformat.v4 import new_markdown_cell
 from binascii import a2b_base64
 
-from ..extract_attachments import ExtractAttachmentsPreprocessor
+from thermohw import ExtractAttachmentsPreprocessor
 
 
 preproc = ExtractAttachmentsPreprocessor()

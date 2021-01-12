@@ -35,7 +35,7 @@ jobs:
     - name: Install the package
       run: python -m pip install .[testing]
     - name: Run the tests
-      run: pytest -vv --pyargs thermohw
+      run: pytest -vv test
 
   conda-build-and-upload:
     runs-on: ubuntu-latest

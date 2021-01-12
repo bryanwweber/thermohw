@@ -3,7 +3,7 @@ import os
 import pkg_resources
 
 import nbformat
-from ..convert_thermo_hw import pdf_exp, nb_exp
+from thermohw.convert_thermo_hw import pdf_exp, nb_exp
 
 
 def test_convert_pathological_image_name() -> None:

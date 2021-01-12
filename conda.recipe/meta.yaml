@@ -28,6 +28,8 @@ requirements:
     - pandocfilters >=1.4,<2.0
 
 test:
+  source_files:
+    - test
   imports:
     - thermohw
 
@@ -35,7 +37,7 @@ test:
     - pytest >=3.2.0
 
   commands:
-    - pytest -vv --pyargs thermohw
+    - pytest -vv test
     - convert_thermo_hw --help
 
 about:
