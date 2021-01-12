@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 ### Removed
-- Exam processing, which didn't work well and wasn't really used
+- Remove exam processing, which didn't work well and wasn't really used
 
 ## [0.6.0] - 2020-SEP-11
 ### Added

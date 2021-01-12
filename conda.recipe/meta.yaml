@@ -13,7 +13,6 @@ build:
   noarch: python
   entry_points:
     - convert_thermo_hw = thermohw.convert_thermo_hw:main
-    - convert_thermo_exam = thermohw.convert_thermo_exam:main
 
 requirements:
   build:
@@ -52,5 +51,4 @@ about:
     This package installs a CLI script to convert Jupyter Notebook homework
     assignments to PDF (with and without solutions) and a set of Notebooks
     (with and without solutions).
-  doc_url: https://bryanwweber.github.io/thermohw
   dev_url: {{ data['url'] }}

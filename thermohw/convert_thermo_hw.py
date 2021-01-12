@@ -32,7 +32,6 @@ main(argv=None): Process the command line arguments and run the `process`
 """
 # Standard library
 from typing import Iterable, Dict, Sequence, Optional, List, Any, Union
-import os
 from pathlib import Path
 from argparse import ArgumentParser
 from zipfile import ZipFile
@@ -54,8 +53,8 @@ from .filters import convert_div, convert_raw_html
 from .utils import combine_pdf_as_bytes
 
 c = Config()
-here = os.path.abspath(os.path.dirname(__file__))
-c.PDFExporter.template_file = os.path.join(here, "homework.tpl")
+here = Path(__file__).resolve().parent
+c.PDFExporter.template_file = str(here / "homework.tpl")
 c.PDFExporter.filters = {
     "convert_div": convert_div,
     "convert_raw_html": convert_raw_html,
