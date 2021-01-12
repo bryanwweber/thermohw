@@ -16,7 +16,8 @@ SolnRemoverPreprocessor:
 """
 
 # Standard Library
-from typing import TYPE_CHECKING, Tuple, List
+from typing import TYPE_CHECKING, Tuple, List, Dict
+import warnings
 
 # Third-Party
 from nbconvert.preprocessors import Preprocessor
@@ -53,62 +54,18 @@ md_ans_source = """\
 </div>
 """
 md_ans_cell = new_markdown_cell(source=md_ans_source)
+md_ans_cell.metadata.deletable = False
 
 sketch_source = "**Attach an image of your sketch for this problem in this cell.**"
 sketch_cell = new_markdown_cell(source=sketch_source)
-
-exam_instructions_source = """\
----
-
-## Instructions
-
-You have 1.25 hours to complete the exam. When you are finished with the exam, you should download
-a PDF of all of your Notebooks and upload it to Gradescope. You **_MUST_** upload the exam to
-Gradescope before the end of your course period or **_IT WILL NOT BE ACCEPTED_**. Absolutely no
-late exams will be accepted, no excuses, no BS. If you have any problems, contact me as soon as you
-run into trouble.
-
-Complete all of the questions below. Short answer questions should be answered in the indicated
-Markdown cell immediately below the question statement, and can generally be answered in 1-3
-sentences. The answers to problem solving questions should be placed in the indicated Markdown
-cells, which should be immediately below your work on that problem.
-
-You may use your computer, calculator, textbook, homework problem solutions, JupyterHub/ThermoState,
-or any websites to solve the problems. However, you may not copy the question text (or portions of
-the text) into a search engine, and **you must work by yourself** to solve these problems.
-Furthermore, my standard policy on academic integrity from the course syllabus applies (in addition
-to the statement below)—All of the work that you hand in must be entirely your own; as one example,
-you may not use answers to these questions that you find on the web directly, your answers must
-represent your own work and your own understanding.
-
----
-
-## Honesty and Academic Integrity Statement
-
-**Read the following statement and type your name in the cell below to indicate your acceptance
-of and agreement with these policies**
-
-I agree that I will not discuss, disclose, copy, reproduce, adapt, or transmit exam content orally,
-in writing, on the Internet, or through any other medium prior to the distribution of the exam
-solutions by the Instructor. I agree that I will (and have) worked entirely on my own for this exam
-and the work below represents entirely my individual work and understanding. I understand that my
-failure to follow the above guidelines will result in the consequences outlined in the syllabus
-under the academic honesty and integrity policy, possibly including, but not limited to, a failing
-grade on this exam.
-
----
-
-## Type your name in the cell below
-"""
-exam_instructions_cell = new_markdown_cell(source=exam_instructions_source)
 
 
 class RawRemover(Preprocessor):  # type: ignore
     """Remove any raw cells from the Notebook."""
 
     def preprocess(
-        self, nb: "NotebookNode", resources: dict
-    ) -> Tuple["NotebookNode", dict]:
+        self, nb: "NotebookNode", resources: Dict[str, Dict[str, bool]]
+    ) -> Tuple["NotebookNode", Dict[str, Dict[str, bool]]]:
         """Remove any raw cells from the Notebook.
 
         By default, exclude raw cells from the output. Change this by including
@@ -130,25 +87,79 @@ class SolutionRemover(Preprocessor):  # type: ignore
     """Preprocess a homework problem to remove the solution.
 
     This preprocessor produces output suitable for distribution to students as
-    an assignment by removing the solution from the Notebook. The preprocessor
-    looks for a cell with the header '## solution' (case-insensitive) in it,
-    which delimits the beginning of the solution section. Then, for every cell
-    after that, it checks for a level 3 header, which delimits the start of a
-    section of the solution. All cells between the level 3 headers are replaced
-    with cells that ask the students to write their code and explanation.
+    an assignment by removing the solution from the Notebook.
+
+    The solution cells are found by tags attached to the cells. A cell tagged
+    ``solution`` will start the Solution section. Following that, any cell
+    tagged ``part`` will insert a solution prompt into the assignment. If the
+    additional tag ``sketch`` is added, then a prompt for a sketch is inserted
+    instead. Prior to the start of the Solution, all cells are kept.
+
+    To enable the legacy processing behavior, described below, the
+    resources->legacy key must be set to True. If no legacy key is present in
+    resources, the default is assumed to be True for now. This will change in
+    the future.
+
+    The preprocessor looks for a cell with the header '## solution'
+    (case-insensitive) in it, which delimits the beginning of the solution
+    section. Then, for every cell after that, it checks for a level 3 header,
+    which delimits the start of a section of the solution. All cells between the
+    level 3 headers are replaced with cells that ask the students to write their
+    code and explanation.
 
     The processing is only done if the resources->remove_solution key is True.
     """
 
     def preprocess(
-        self, nb: "NotebookNode", resources: dict
-    ) -> Tuple["NotebookNode", dict]:
+        self, nb: "NotebookNode", resources: Dict[str, bool]
+    ) -> Tuple["NotebookNode", Dict[str, bool]]:
         """Preprocess the entire notebook."""
         if "remove_solution" not in resources:
             raise KeyError("The resources dictionary must have a remove_solution key.")
         if not resources["remove_solution"]:
             return nb, resources
 
+        if resources.get("legacy", True):
+            warnings.warn(
+                "The legacy behavior for finding solution cells will be removed in "
+                "the future.",
+                FutureWarning,
+            )
+            return self.legacy_parser(nb, resources)
+
+        keep_cells: List["NotebookNode"] = []
+        solution_started = False
+        for cell in nb.cells:
+            if "tags" in cell.metadata:
+                tags = cell.metadata["tags"][:]
+                del cell.metadata["tags"]
+            else:
+                tags = []
+            if "solution" in tags:
+                solution_started = True
+                keep_cells.append(cell)
+            elif "part" in tags:
+                keep_cells.append(cell)
+                if "sketch" in tags:
+                    keep_cells.append(sketch_cell)
+                elif resources["by_hand"]:
+                    keep_cells.append(by_hand_cell)
+                else:
+                    keep_cells.append(md_expl_cell)
+                    keep_cells.append(code_ans_cell)
+                    keep_cells.append(md_ans_cell)
+            else:
+                if tags:
+                    warnings.warn(f"Unknown tag value: {tags}", UserWarning)
+                if not solution_started:
+                    keep_cells.append(cell)
+
+        nb.cells = keep_cells
+        return nb, resources
+
+    def legacy_parser(
+        self, nb: "NotebookNode", resources: Dict[str, bool]
+    ) -> Tuple["NotebookNode", Dict[str, bool]]:
         keep_cells_idx: List[int] = []
         for index, cell in enumerate(nb.cells):
             if "## solution" in cell.source.lower():
@@ -188,42 +199,4 @@ class SolutionRemover(Preprocessor):  # type: ignore
                         keep_cells.append(md_ans_cell)
 
         nb.cells = keep_cells
-        return nb, resources
-
-
-class ExamSAPreprocessor(Preprocessor):  # type: ignore
-    """Preprocess a short-answer exam Notebook into the assignment."""
-
-    def preprocess(
-        self, nb: "NotebookNode", resources: dict
-    ) -> Tuple["NotebookNode", dict]:
-        """Preprocess the entire Notebook."""
-        for index, cell in enumerate(nb.cells):
-            if "## Solution" in cell.source:
-                nb.cells[index + 1].source = ""
-
-        return nb, resources
-
-
-class ExamInstructionsPreprocessor(Preprocessor):  # type: ignore
-    """Preprocess an exam Notebook to add the instructions."""
-
-    def preprocess(
-        self, nb: "NotebookNode", resources: dict
-    ) -> Tuple["NotebookNode", dict]:
-        """Preprocess the entire Notebook."""
-
-        exam_num = resources["exam_num"]
-        time = resources["time"]
-        date = resources["date"]
-
-        nb.cells.insert(0, new_markdown_cell(source="---"))
-        nb.cells.insert(0, new_markdown_cell(source=""))
-        nb.cells.insert(0, exam_instructions_cell)
-        first_cell_source = (
-            "# ME 2233: Thermodynamic Principles\n\n"
-            f"# Exam {exam_num} - {time}\n\n# {date}"
-        )
-        nb.cells.insert(0, new_markdown_cell(source=first_cell_source))
-
         return nb, resources

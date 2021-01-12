@@ -9,12 +9,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- The `SolutionRemover` preprocessor now uses cell tags to find the solution and its parts
+- A `legacy` command line argument switches back to the old method of finding the solution based on parsing the source of the cell
+- A test of the new tag-based `SolutionRemover`
 
 ### Changed
+- Highlighted answer cells cannot be deleted in the assignment notebook
+- Support for Python 3.6 is dropped
+- Moved to `src` directory layout and don't include tests with the package
 
 ### Fixed
+- Type hinting for `resources` dictionaries in some preprocessors
 
 ### Removed
+- Remove exam processing, which didn't work well and wasn't really used
 
 ## [0.6.0] - 2020-SEP-11
 ### Added

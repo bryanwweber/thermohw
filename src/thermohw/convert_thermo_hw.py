@@ -32,7 +32,6 @@ main(argv=None): Process the command line arguments and run the `process`
 """
 # Standard library
 from typing import Iterable, Dict, Sequence, Optional, List, Any, Union
-import os
 from pathlib import Path
 from argparse import ArgumentParser
 from zipfile import ZipFile
@@ -45,6 +44,7 @@ import sys
 from nbconvert import NotebookExporter, PDFExporter
 from traitlets.config import Config
 from nbconvert.writers import FilesWriter
+import nbformat
 
 # Local imports
 from .extract_attachments import ExtractAttachmentsPreprocessor
@@ -54,8 +54,8 @@ from .filters import convert_div, convert_raw_html
 from .utils import combine_pdf_as_bytes
 
 c = Config()
-here = os.path.abspath(os.path.dirname(__file__))
-c.PDFExporter.template_file = os.path.join(here, "homework.tpl")
+here = Path(__file__).resolve().parent
+c.PDFExporter.template_file = str(here / "homework.tpl")
 c.PDFExporter.filters = {
     "convert_div": convert_div,
     "convert_raw_html": convert_raw_html,
@@ -84,6 +84,7 @@ def process(
     problems_to_do: Optional[Iterable[int]] = None,
     prefix: Optional[Path] = None,
     by_hand: Optional[Iterable[int]] = None,
+    legacy: bool = False,
 ) -> None:
     """Process the homework problems in ``prefix`` folder.
 
@@ -98,7 +99,9 @@ def process(
     by_hand, optional
         A list of the problems that should be labeled to be completed
         by hand and have an image with the solution included.
-
+    legacy, optional
+        A boolean flag determining whether the legacy method of finding
+        solutions will be used, based on parsing cell content.
     """
     if prefix is None:
         prefix = Path(".")
@@ -136,6 +139,7 @@ def process(
     res: Dict[str, Union[Dict[str, bool], str, bool]] = {
         "delete_pymarkdown": True,
         "global_content_filter": {"include_raw": False},
+        "legacy": legacy,
     }
 
     for problem in problems:
@@ -147,22 +151,25 @@ def process(
         else:
             res["by_hand"] = False
         problem_fname = str(problem.resolve())
+        problem_nb = nbformat.read(problem_fname, as_version=4)
+        if "celltoolbar" in problem_nb.metadata:
+            del problem_nb.metadata["celltoolbar"]
 
         # Process assignments
         res["remove_solution"] = True
-        assignment_pdf, _ = pdf_exp.from_filename(problem_fname, resources=res)
+        assignment_pdf, _ = pdf_exp.from_notebook_node(problem_nb, resources=res)
         assignment_pdfs.append(BytesIO(assignment_pdf))
 
-        assignment_nb, _ = nb_exp.from_filename(problem_fname, resources=res)
+        assignment_nb, _ = nb_exp.from_notebook_node(problem_nb, resources=res)
         with ZipFile(assignment_zip_name, mode="a") as zip_file:
             zip_file.writestr(problem.name, assignment_nb)
 
         # Process solutions
         res["remove_solution"] = False
-        solution_pdf, _ = pdf_exp.from_filename(problem_fname, resources=res)
+        solution_pdf, _ = pdf_exp.from_notebook_node(problem_nb, resources=res)
         solution_pdfs.append(BytesIO(solution_pdf))
 
-        solution_nb, _ = nb_exp.from_filename(problem_fname, resources=res)
+        solution_nb, _ = nb_exp.from_notebook_node(problem_nb, resources=res)
         with ZipFile(solution_zip_name, mode="a") as zip_file:
             zip_file.writestr(problem.stem + "-soln" + problem.suffix, solution_nb)
 
@@ -213,6 +220,14 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
             "problems will be processed. Otherwise, will exit after cleaning."
         ),
     )
+    parser.add_argument(
+        "--legacy",
+        action="store_true",
+        help=(
+            "Enable legacy behavior for finding solution cells, based on "
+            "finding specific cell content."
+        ),
+    )
     args = parser.parse_args(argv)
     prefix = Path(f"homework/homework-{args.hw_num}")
     if args.clean:
@@ -220,7 +235,13 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
         if not args.problems:
             sys.exit(0)
 
-    process(args.hw_num, args.problems, prefix=prefix, by_hand=args.by_hand)
+    process(
+        args.hw_num,
+        args.problems,
+        prefix=prefix,
+        by_hand=args.by_hand,
+        legacy=args.legacy,
+    )
 
 
 if __name__ == "__main__":

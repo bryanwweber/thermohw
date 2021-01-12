@@ -1,3 +1,4 @@
-include thermohw/homework.tpl
+include src/thermohw/homework.tpl
 include LICENSE
-include thermohw/test/*.ipynb
+include CHANGELOG.md
+include README.md

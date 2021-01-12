@@ -55,7 +55,7 @@ def div_filter(key: str, value: list, format: str, meta: Any) -> Optional[list]:
 
 
 def convert_div(text: str, format: Optional[str] = None) -> "applyJSONFilters":
-    """Apply the `dev_filter` action to the text."""
+    """Apply the `div_filter` action to the text."""
     return applyJSONFilters([div_filter], text, format=format)
 
 
